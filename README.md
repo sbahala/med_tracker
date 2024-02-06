@@ -1,3 +1,3 @@
 Med Tracker
 
-Team member:Yuzhi Wang
+Team member: Yuzhi Wang
