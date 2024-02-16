@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import LoginSignup from './Components/LoginSignup/loginSignup.jsx';
 
 // function App() {
 //   return (
@@ -28,7 +29,9 @@ function App() {
         <header className="App-header">
           <h1>Welcome to Med Tracker</h1>
         </header>
+        <LoginSignup/>
       </div>
+
   );
 }
 
