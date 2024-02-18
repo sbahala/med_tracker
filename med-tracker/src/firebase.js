@@ -1,0 +1,19 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth"
+import { getStorage } from "firebase/storage"
+
+const firebaseConfig = {
+    apiKey: "AIzaSyArL8xR4WsE1KroHleIqU4OdFpCo0d1Z5A",
+    authDomain: "med-tracker-13568.firebaseapp.com",
+    projectId: "med-tracker-13568",
+    storageBucket: "med-tracker-13568.appspot.com",
+    messagingSenderId: "497399430338",
+    appId: "1:497399430338:web:e9e0255948fd76dbc88f5b"
+};
+
+// Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth();
+export const storage = getStorage();
+

@@ -1,0 +1,71 @@
+.formContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #a7bcff;
+}
+
+.formWrapper {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #ffffff;
+    width: 400px; /* Adjust based on your preference */
+}
+
+.logo {
+    font-size: 24px;
+    color: #009688; /* Healthcare-associated color */
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 20px;
+    color: #333333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="email"], input[type="password"] {
+    font-size: 16px;
+}
+
+button {
+    padding: 10px;
+    background-color: #009688; /* Matching the logo color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #00796b; /* A shade darker for hover effect */
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+span {
+    display: block;
+    text-align: center;
+}
