@@ -13,8 +13,11 @@ const Home = () => {
                 <p>
                     This is Med Tracker, your go-to app for tracking your medical history and appointments. Stay healthy and informed with us.
                 </p>
-                <button onClick={() => navigate('/login')}>Login</button>
-                <button onClick={() => navigate('/signup')}>Sign Up</button>
+                <div className="buttonsContainer">
+                    <button onClick={() => navigate('/login')}>Login</button>
+                    <button onClick={() => navigate('/signup')}>Sign Up</button>
+                </div>
+                
             </div>
         </div>
     );
