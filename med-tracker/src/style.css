@@ -12,6 +12,9 @@
     padding: 20px;
     background-color: #ffffff;
     width: 400px; /* Adjust based on your preference */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .logo {
@@ -40,6 +43,7 @@ input {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width:250px;
 }
 
 input[type="email"], input[type="password"] {
@@ -54,6 +58,8 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin: 5px; /* Add margin to create space between buttons */
+    flex-grow: 1; /* Buttons will expand to fill the container */
 }
 
 button:hover {
@@ -68,4 +74,83 @@ button:disabled {
 span {
     display: block;
     text-align: center;
+}
+.setAccountDetailsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f7f7f7;
+}
+
+.setAccountForm {
+    max-width: 500px;
+    margin: 20px;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.setAccountForm label {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.setAccountForm input, .setAccountForm select {
+    width: 100%;
+    padding: 8px 15px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.setAccountForm button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #009688;;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.setAccountForm button:hover {
+    background-color: #00796b;
+}
+
+.dashboardButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #009688;;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dashboardButton:hover {
+    background-color: #00796b;
+}
+
+/* General form placeholder styling */
+::placeholder {
+    color: #888;
+}
+
+/* Adding some space between the form and the button */
+.formSpacing {
+    margin-bottom: 30px;
+}
+
+/* Add a container for the buttons to control spacing */
+.buttonsContainer {
+    display: flex;
+    justify-content: space-between; /* This will add space between your buttons */
+    width: 100%; /* Match the width of the formWrapper */
+    max-width: 200px; /* Set a max-width to keep buttons from stretching too far apart */
 }
