@@ -3,8 +3,7 @@ import Login from "./pages/login";
 import Home from "./pages/home";
 import AdminDashboard from "./Components/admin/adminDashboard";
 import PatientDashboard from './Components/Patients/PatientDashboard';
-import PatientAccountSet from './Components/Patients/setAccountDetails';
-import PatientEditAndViewAccount from './Components/Patients/editAndViewAccount';
+import EditAccountDetails from './Components/Patients/editAccountDetails';
 import {
     BrowserRouter,
     Routes,
@@ -34,8 +33,11 @@ function App() {
                     <PatientDashboard />
                 </ProtectedRoute>
             } />
-
-
+            <Route path="editPatientAccount" element={
+                <ProtectedRoute allowedRoles={['patient']}>
+                    <EditAccountDetails />
+                </ProtectedRoute>
+            } />
         </Routes>
       </BrowserRouter>
 
