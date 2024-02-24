@@ -21,9 +21,10 @@ const Signup = () => {
                 uid: res.user.uid,
                 firstName,
                 lastName,
-                email
+                email,
+                role: "patient"
             })
-            navigate('/patient-dashboard');
+            navigate('/login');
         } catch (e) {
             setErr(true);
         }
