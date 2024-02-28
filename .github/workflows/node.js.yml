@@ -11,13 +11,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -26,9 +24,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-      working-directory: med-tracker
-    - run: npm run build --if-present
-      working-directory: med-tracker
-    - run: npm test
-      working-directory: med-tracker
+
+    - name: Install Dependencies
+      run: |
+        cd med-tracker
+        npm ci
+
+    - name: Build
+      run: |
+        cd med-tracker
+        npm run build --if-present
+
+    - name: Run Tests
+      run: |
+        cd med-tracker
+        npm test
+
