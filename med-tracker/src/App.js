@@ -10,8 +10,8 @@ import {
     Route
 } from "react-router-dom"
 import {ProtectedRoute} from "./context/protectedRoute";
-import {useContext} from "react";
-import {AuthContext} from "./context/authContext";
+//import {useContext} from "react";
+//import {AuthContext} from "./context/authContext";
 
 function App() {
 
