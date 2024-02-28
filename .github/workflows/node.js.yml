@@ -24,11 +24,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache:
-          path: med-tracker/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('med-tracker/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+        cache: 'npm'
+        cache-dependency-path: med-tracker/package-lock.json
 
     - name: Install Dependencies
       run: npm ci
