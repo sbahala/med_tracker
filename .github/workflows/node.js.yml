@@ -20,12 +20,21 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: med-tracker/package-lock.json
+    # - name: Use Node.js ${{ matrix.node-version }}
+    #  uses: actions/setup-node@v3
+    #  with:
+    #   node-version: ${{ matrix.node-version }}
+    #    cache: 'npm'
+    #   cache-dependency-path: med-tracker/package-lock.json
+
+    - name: Print npm version
+      run: npm --version
+
+    - name: Print node version
+      run: node --version
+
+    - name: Check file structure
+      run: ls -alh med-tracker
 
     - name: Install Dependencies
       run: npm ci
