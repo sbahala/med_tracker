@@ -28,16 +28,16 @@ jobs:
         cache: 'npm'
     - name: Clear NPM cache
       run: npm cache clean --force
-      working-directory: med_tracker/med-tracker # Specifies the working directory for this step
+      working-directory: med-tracker/med-tracker # Specifies the working directory for this step
 
     - name: Install Dependencies
       run: npm ci
-      working-directory: med_tracker/med-tracker # Specifies the working directory for this step
+      working-directory: med-tracker/med-tracker # Specifies the working directory for this step
 
     - name: Build
       run: npm run build --if-present
-      working-directory: med_tracker/med-tracker # Specifies the working directory for this step
+      working-directory: med-tracker/med-tracker # Specifies the working directory for this step
 
     - name: Run Tests
       run: npm test
-      working-directory: med_tracker/med-tracker # Specifies the working directory for this step
+      working-directory: med-tracker/med-tracker # Specifies the working directory for this step
