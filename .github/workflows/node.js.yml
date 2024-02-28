@@ -19,24 +19,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache:
+          path: med-tracker/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('med-tracker/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
     - name: Install Dependencies
-      run: |
-        cd med-tracker
-        npm ci
+      run: npm ci
+      working-directory: med-tracker
 
     - name: Build
-      run: |
-        cd med-tracker
-        npm run build --if-present
+      run: npm run build --if-present
+      working-directory: med-tracker
 
     - name: Run Tests
-      run: |
-        cd med-tracker
-        npm test
+      run: npm test
+      working-directory: med-tracker
+
 
