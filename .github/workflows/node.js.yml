@@ -36,6 +36,10 @@ jobs:
     - name: Check file structure
       run: ls -alh med-tracker
 
+    - name: Clear NPM cache
+      run: npm cache clean --force
+      working-directory: med-tracker
+      
     - name: Install Dependencies
       run: npm ci
       working-directory: med-tracker
