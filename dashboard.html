@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .admin-section, .patient-section {
+            width: 45%;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hospital System</h1>
+
+    <div class="dashboard">
+        <div class="admin-section">
+            <h2>Admin Dashboard</h2>
+            <button onclick="openAppointmentModal('admin')">Create Appointment</button>
+            <button onclick="openEquipmentModal()">Manage Equipments</button>
+            <button onclick="openStaffModal()">Manage Staff Accounts</button>
+            <button onclick="openPatientRecords()">Manage Patient Records</button>
+
+            <h3>Appointments</h3>
+            <table id="adminAppointments">
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Date</th>
+                    <th>Slot Time</th>
+                    <th>Doctor</th>
+                    <th>Action</th>
+                </tr>
+                <!-- Populate with data from backend -->
+            </table>
+        </div>
+
+        <div class="patient-section">
+            <h2>Patient Dashboard</h2>
+            <button onclick="openAccountDetails()">Add Account Details</button>
+            <button onclick="openAppointmentModal('patient')">Book Appointment</button>
+
+            <h3>Your Appointments</h3>
+            <table id="patientAppointments">
+                <tr>
+                    <th>Date</th>
+                    <th>Slot Time</th>
+                    <th>Doctor</th>
+                    <th>Action</th>
+                </tr>
+                <!-- Populate with data from backend -->
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals (placeholders, you need to implement these functions) -->
+    <div id="appointmentModal" style="display: none;">
+        <!-- Appointment modal content -->
+    </div>
+
+    <div id="equipmentModal" style="display: none;">
+        <!-- Equipment modal content -->
+    </div>
+
+    <div id="staffModal" style="display: none;">
+        <!-- Staff modal content -->
+    </div>
+
+    <div id="patientRecordsModal" style="display: none;">
+        <!-- Patient records modal content -->
+    </div>
+
+    <div id="accountDetailsModal" style="display: none;">
+        <!-- Account details modal content -->
+    </div>
+
+    <script>
+        function openAppointmentModal(userType) {
+            // Implement function to open appointment modal for admin or patient
+        }
+
+        function openEquipmentModal() {
+            // Implement function to open equipment modal
+        }
+
+        function openStaffModal() {
+            // Implement function to open staff modal
+        }
+
+        function openPatientRecords() {
+            // Implement function to open patient records modal
+        }
+
+        function openAccountDetails() {
+            // Implement function to open account details modal
+        }
+    </script>
+</body>
+</html>
