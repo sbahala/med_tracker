@@ -2,9 +2,9 @@ import React ,{ useState }from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../../firebase";
 import { auth } from '../../firebase';
-import { doc,updateDoc,getDoc,setDoc } from "firebase/firestore";
+import { doc,updateDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { collection, query, where, getDocs,addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const NurseDashboard = () => {
     const navigate = useNavigate();
