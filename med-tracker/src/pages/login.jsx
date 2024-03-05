@@ -22,7 +22,11 @@ const Login = () => {
                 navigate('/adminDashboard');
             } else if (userRole === 'patient') {
                 navigate('/patientDashboard');
-            } else {
+            } else if (userRole === 'nurse') {
+                navigate('/nurseDashboard');
+            }else if (userRole === 'doctor') {
+                navigate('/doctorDashboard');
+            }else {
                 navigate('/');
             }
 

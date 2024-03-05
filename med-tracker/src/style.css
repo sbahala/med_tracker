@@ -188,3 +188,22 @@ span {
     padding: 10px 0;
     z-index: 10;
 }
+
+.textareaField {
+    width: calc(100% - 100px); /* Full width minus padding */
+    height: 100px; /* Set a fixed height */
+    padding: 15px; /* Comfortable padding around the text */
+    margin-bottom: 20px; /* Same as input margin */
+    border: 1px solid #ccc; /* Similar to input fields */
+    border-radius: 5px; /* Consistent with input fields */
+    font-family: 'Arial', sans-serif; /* Match the font to your inputs */
+    font-size: 16px; /* Match the font size to your inputs */
+    resize: vertical; /* Allow vertical resizing only */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Optional: inner shadow for depth */
+    transition: border-color 0.3s; /* Smooth transition for focus */
+}
+
+.textareaField:focus {
+    border-color: #009688; /* Highlight color when focused */
+    outline: none; /* Remove the default focus outline */
+}
