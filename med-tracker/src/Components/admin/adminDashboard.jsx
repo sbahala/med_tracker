@@ -4,7 +4,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import {addAppointment, getAppointments} from "../service/appointmentService";
+import { addAppointment, getAppointments } from "../service/appointmentService";
 import AppointmentForm from "../service/appointmentForm";
 
 const AdminDashboard = () => {
@@ -13,23 +13,27 @@ const AdminDashboard = () => {
     const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const loadedAppointments = await getAppointments();
+                setAppointments(loadedAppointments.map(appointment => ({
+                    title: `${appointment.departmentName} - ${appointment.doctorName}`,
+                    start: `${appointment.date}T${appointment.time}`,
+                    
+                })));
+            } catch (error) {
+                console.error('Failed to fetch appointments:', error);
+            }
+        };
+
         (async () => {
             try {
                 await fetchAppointments();
             } catch (error) {
-                console.error('获取预约数据失败:', error);
+                console.error('Failed to fetch appointments:', error);
             }
         })();
     }, []);
-
-    const fetchAppointments = async () => {
-        const loadedAppointments = await getAppointments();
-        setAppointments(loadedAppointments.map(appointment => ({
-            title: `${appointment.departmentName} - ${appointment.doctorName}`,
-            start: `${appointment.date}T${appointment.time}`,
-            // 可以添加更多的属性，以适应FullCalendar的事件格式
-        })));
-    };
 
     const handleSaveAppointment = async (appointmentData) => {
         console.log('Saving new appointment:', appointmentData);
@@ -37,18 +41,16 @@ const AdminDashboard = () => {
             await addAppointment(appointmentData);
             await fetchAppointments();
         } catch (error) {
-            console.error("Failed to save appointment:", error);
-
+            console.error('Failed to save appointment:', error);
         }
     };
-
 
     const handleSignOut = async () => {
         try {
             await signOut(auth);
             navigate('/');
         } catch (error) {
-            console.error("Error signing out: ", error);
+            console.error('Error signing out:', error);
         }
     };
 
