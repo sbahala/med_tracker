@@ -9,23 +9,21 @@ import AppointmentForm from "../service/appointmentForm";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-
     const [appointments, setAppointments] = useState([]);
 
-    useEffect(() => {
-        const fetchAppointments = async () => {
-            try {
-                const loadedAppointments = await getAppointments();
-                setAppointments(loadedAppointments.map(appointment => ({
-                    title: `${appointment.departmentName} - ${appointment.doctorName}`,
-                    start: `${appointment.date}T${appointment.time}`,
-                    
-                })));
-            } catch (error) {
-                console.error('Failed to fetch appointments:', error);
-            }
-        };
+    const fetchAppointments = async () => {
+        try {
+            const loadedAppointments = await getAppointments();
+            setAppointments(loadedAppointments.map(appointment => ({
+                title: `${appointment.departmentName} - ${appointment.doctorName}`,
+                start: `${appointment.date}T${appointment.time}`,
+            })));
+        } catch (error) {
+            console.error('Failed to fetch appointments:', error);
+        }
+    };
 
+    useEffect(() => {
         (async () => {
             try {
                 await fetchAppointments();
