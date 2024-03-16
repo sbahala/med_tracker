@@ -17,7 +17,7 @@ const AdminDashboard = () => {
             try {
                 await fetchAppointments();
             } catch (error) {
-                console.error('获取预约数据失败:', error);
+                console.error('unable to fetch appointment', error);
             }
         })();
     }, []);
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
         setAppointments(loadedAppointments.map(appointment => ({
             title: `${appointment.departmentName} - ${appointment.doctorName}`,
             start: `${appointment.date}T${appointment.time}`,
-            // 可以添加更多的属性，以适应FullCalendar的事件格式
+
         })));
     };
 
@@ -55,7 +55,6 @@ const AdminDashboard = () => {
     return (
         <div>
             <h1>Admin Dashboard</h1>
-            <h2>Admin Dashboard</h2>
             <AppointmentForm onSaveAppointment={handleSaveAppointment} />
             <FullCalendar
                 plugins={[dayGridPlugin]}
