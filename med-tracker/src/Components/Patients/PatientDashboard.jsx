@@ -12,6 +12,9 @@ const PatientDashboard = () => {
     const handleSetupAccount=()=>{
         navigate('/editPatientAccount');
     }
+    const handleViewAppointments=()=>{
+        navigate('/appointmentRecords');
+    }
 
     const [appointments, setAppointments] = useState([]);
 
@@ -60,6 +63,7 @@ const PatientDashboard = () => {
             
             <main className="content">
                 <button onClick={handleSetupAccount}>Edit Account</button>
+                <button onClick={handleViewAppointments}>View Appointments</button>
             </main>
 
             <AppointmentForm onSaveAppointment={handleSaveAppointment} />

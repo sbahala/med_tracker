@@ -207,3 +207,214 @@ span {
     border-color: #009688; /* Highlight color when focused */
     outline: none; /* Remove the default focus outline */
 }
+
+
+.setAccountDetailsContainer {
+    width: 500%;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.fixed-header {
+    background: #f7f7f7;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.appointments {
+    margin-top: 20px;
+}
+
+/* Accordion styles */
+.MuiAccordion-root {
+    margin-bottom: 10px;
+}
+
+.MuiAccordionSummary-root {
+    background-color: #e0e0e0;
+}
+
+.MuiAccordionDetails-root {
+    background-color: #e0e0e0;
+    border-top: 1px solid #e0e0e0;
+}
+
+.dashboardButton {
+    background-color: #4285F4;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+}
+
+.dashboardButton:hover {
+    background-color: #357ae8;
+}
+
+.futureAppointment .MuiAccordionSummary-root {
+    background-color: #d1eaff; /* Light blue to indicate future appointments */
+}
+
+/* Style for past appointments */
+.pastAppointment .MuiAccordionSummary-root {
+    background-color: #b0f0e9; /* Gray to indicate past appointments */
+}
+
+/* Optionally, you can make the text bold for future appointments */
+.futureAppointment .MuiAccordionSummary-root .MuiTypography-root {
+    font-weight: bold;
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 0.2em 0.5em;
+    margin-left: 0px;
+    border-radius: 5px;
+    color: white;
+    font-size: 0.8em;
+}
+
+.statusBadge.future {
+    background-color: #5cb85c; /* Green for future appointments */
+}
+
+.statusBadge.past {
+    background-color: #999; /* Grey for past appointments */
+}
+
+.statusBadge.pending {
+    background-color: #f0ad4e; /* Orange for pending appointments */
+}
+
+.statusBadge.ontime {
+    background-color: rgb(94, 109, 219); /* Light blue for on-time appointments */
+}
+
+.statusBadge.accepted {
+    background-color: #5cb85c; /* Green for accepted appointments */
+}
+
+.statusBadge.expired {
+    background-color: #d9534f; /* Red for expired appointments */
+}
+
+.statusBadge.declined {
+    background-color: #d9534f; /* Red for declined appointments */
+}
+
+.appointmentDetailsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .appointmentDetail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .vitalsForm {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .vitalsForm input,
+  .vitalsForm textarea {
+    margin-bottom: 10px;
+  }
+  
+  .updateVitalsButton {
+    padding: 8px 16px;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  /* Add your existing CSS for buttons, inputs, textareas etc. */
+  
+  /* Add this to ensure the Update Vitals button is on the right */
+  .updateVitalsButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  /* Style the vitals form to show only when the 'Update Vitals for this Appointment' is clicked */
+  .vitalsFormHidden {
+    display: none;
+  }
+  
+  .appointmentSelectionContainer {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+    margin: 20px auto;
+  }
+  
+  .selectionButton {
+    padding: 10px 20px;
+    width: 90%; /* Adjust based on your preference */
+    margin: 5px; /* Space between buttons */
+    background-color: #f0f0f0; /* Light grey background */
+    color: #555; /* Text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  }
+  
+  .selectionButton:hover {
+    background-color: #d1eaff;
+  }
+  
+  .selectionButton.active {
+    background-color: #009688; 
+    color: white; 
+  }
+  .acceptButton {
+    background-color: #4CAF50; 
+}
+
+.declineButton {
+    background-color: #f44336; 
+}
+
+.onTimeButton {
+    background-color: #009688;
+}
+.updateVitalsButton{
+    background-color: #009688;
+}
+
+
+.acceptButton:hover, .declineButton:hover, .onTimeButton:hover {
+    opacity: 0.8; 
+}
+
+.acceptButton, .declineButton, .onTimeButton {
+    margin: 5px 0; 
+    flex-grow: unset; 
+    width: auto; 
+    padding: 8px 16px;
+}
