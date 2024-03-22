@@ -1,4 +1,4 @@
-import React ,{ useState }from 'react';
+import React ,{ useState,useEffect, useCallback }from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from "../../firebase";
 import { auth } from '../../firebase';
@@ -13,8 +13,36 @@ const NurseDashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [editingVitalsFor, setEditingVitalsFor] = useState(null);
     const [selectedAppointmentStatus, setSelectedAppointmentStatus] = useState('');
-    //const [selectedStatus, setSelectedStatus] = useState('');
-  
+    const fetchAppointments = useCallback(async (status) => {
+        setIsLoading(true);
+        const appointmentsRef = collection(db, "appointments");
+        let queryConstraints = [where("status", "==", status)];
+        
+        const q = query(appointmentsRef, ...queryConstraints);
+      
+        try {
+          const querySnapshot = await getDocs(q);
+          const newAppointments = querySnapshot.docs.map((documentSnapshot) => ({
+            appointmentId: documentSnapshot.id,
+            ...documentSnapshot.data(),
+          }));
+          
+          setAppointmentDetails(newAppointments);
+    
+        } catch (error) {
+          console.error("Error fetching appointments: ", error);
+          alert(`Error fetching appointments: ${error.message}`);
+        } finally {
+          setIsLoading(false); // Ensure we always set loading to false after the operation
+        }
+      }, []);
+    
+    useEffect(() => {
+        if (selectedAppointmentStatus) {
+            fetchAppointments(selectedAppointmentStatus);
+        }
+    }, [selectedAppointmentStatus, fetchAppointments]);
+
     const handleSearch = async () => {
       setIsLoading(true);
       const fetchedPatientDetails = await searchPatientByName(firstName, lastName);
@@ -98,8 +126,13 @@ const NurseDashboard = () => {
                 status: newStatus,
             });
             alert(`Appointment ${newStatus.toLowerCase()} successfully.`);
-            // Optionally, refresh the appointments list to reflect the update
-            handleSearch(); // Assuming this will refetch the appointment details
+            if (newStatus === 'OnTime') {
+                // Refresh the list of accepted appointments instead of searching by patient name
+                fetchAppointments('Accepted'); // Change this to the appropriate status if needed
+            } else {
+                // Otherwise, handle as previously, which may include searching by patient name
+                handleSearch(); 
+            }
         } catch (error) {
             console.error('Error updating appointment status: ', error);
             alert('Failed to update appointment status.');
@@ -165,10 +198,10 @@ const NurseDashboard = () => {
                                             <div>
                                                 {/* Vitals form fields and submit button */}
                                                 <h3>Fill Additional Patient Details</h3>
-                                                <input type="text" name="height" placeholder="Height (feet)" value={appointment.height || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'height', e.target.value)} />
-                                                <input type="text" name="weight" placeholder="Weight (Lbs)" value={appointment.weight || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'weight', e.target.value)} />
-                                                <input type="text" name="bloodPressure" placeholder="Blood Pressure (mmHg)" value={appointment.bloodPressure || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'bloodPressure', e.target.value)} />
-                                                <textarea className="textareaField"  name="allergies" placeholder="Allergies" value={appointment.allergies || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'allergies', e.target.value)} />
+                                                <input type="text" name="height" placeholder="Height (feet)" value={appointment.height || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'height', e.target.value)} />
+                                                <input type="text" name="weight" placeholder="Weight (Lbs)" value={appointment.weight || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'weight', e.target.value)} />
+                                                <input type="text" name="bloodPressure" placeholder="Blood Pressure (mmHg)" value={appointment.bloodPressure || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'bloodPressure', e.target.value)} />
+                                                <textarea className="textareaField"  name="allergies" placeholder="Allergies" value={appointment.allergies || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'allergies', e.target.value)} />
                                                 <textarea className="textareaField"  name="familyMedicalHistory" placeholder="Family Medical History" value={appointment.familyMedicalHistory || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'familyMedicalHistory', e.target.value)} />
                                                 <button onClick={() => handleVitalsSubmit(appointment.appointmentId)}>Submit Details</button>
                                             </div>
