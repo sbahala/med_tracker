@@ -7,6 +7,7 @@ import EditAccountDetails from './Components/Patients/editAccountDetails';
 import NurseDashboard from "./Components/nurse/nurseDashboard";
 import DoctorDashboard from "./Components/doctor/doctorDashboard";
 import AppointmentRecords from "./Components/Patients/appointmentRecords";
+import AppointmentCreate from "./Components/Patients/appointmentCreate";
 import {
     BrowserRouter,
     Routes,
@@ -54,6 +55,11 @@ function App() {
             <Route path="appointmentRecords" element={
                 <ProtectedRoute allowedRoles={['patient']}>
                     <AppointmentRecords />
+                </ProtectedRoute>
+            } />
+            <Route path="appointmentCreate" element={
+                <ProtectedRoute allowedRoles={['patient']}>
+                    <AppointmentCreate />
                 </ProtectedRoute>
             } />
         </Routes>
