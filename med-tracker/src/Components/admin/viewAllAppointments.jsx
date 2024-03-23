@@ -4,10 +4,11 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import '../../style.css';
+import { useNavigate } from 'react-router-dom';
 
 const ViewAllAppointments = () => {
     const [appointments, setAppointments] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
 
         const fetchAppointments = async () => {
@@ -50,7 +51,9 @@ const ViewAllAppointments = () => {
 
     const groupedAppointments = groupAppointmentsByStatus(appointments);
 
-
+    const backAdminDashboard=()=>{
+        navigate("/adminDashboard");
+    }
 
     return (
         <div className="setAccountDetailsContainer">
@@ -82,6 +85,9 @@ const ViewAllAppointments = () => {
                     <Typography>No appointments found.</Typography>
                 )}
             </main>
+            <footer className = "footer">
+            <button className="dashboardButton" onClick={backAdminDashboard}>Admin Dashboard</button>
+        </footer>
         </div>
     );
 };

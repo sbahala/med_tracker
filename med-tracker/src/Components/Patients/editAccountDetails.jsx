@@ -120,7 +120,7 @@ const EditAccountDetails =()=>{
             <input className="inputField" type="text"name="lastName" placeholder="Last Name" value={patientInfo.lastName} onChange={handleChange} />
             {errors.lastName && <div className="error">{errors.lastName}</div>}
            </label>
-           <label>Email<input className='email'type='email'name='email'placeholder='email'value={patientInfo.email} onChange={handleChange} ></input>
+           <label>Email<input className='email'type='email'name='email'placeholder='email'value={patientInfo.email} disabled ></input>
            {errors.email && <div className="error">{errors.email}</div>}
            </label>
           <label className="formLabel"> Date of Birth
