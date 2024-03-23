@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {addAppointment, getAppointments} from "../service/appointmentService";
-import AppointmentForm from "../service/appointmentForm";
+import {addAppointment, getAppointments} from "./appointmentService";
+import AppointmentForm from "./appointmentForm";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import {useNavigate} from "react-router-dom";
@@ -10,7 +10,7 @@ const AppointmentCreate = () => {
     const navigate = useNavigate();
 
     const handleBack = () =>{
-        navigate('/patientDashboard');
+        navigate(-1);
     }
 
     const [appointments, setAppointments] = useState([]);
@@ -53,9 +53,13 @@ const AppointmentCreate = () => {
                 initialView="dayGridMonth"
                 events={appointments}
             />
-            <button className="Back" onClick={handleBack}>
-                Back
-            </button>
+
+
+            <footer className = "footer">
+                <button className="Back" onClick={handleBack}>
+                    Back
+                </button>
+            </footer>
         </div>
 
     )

@@ -7,7 +7,8 @@ import EditAccountDetails from './Components/Patients/editAccountDetails';
 import NurseDashboard from "./Components/nurse/nurseDashboard";
 import DoctorDashboard from "./Components/doctor/doctorDashboard";
 import AppointmentRecords from "./Components/Patients/appointmentRecords";
-import AppointmentCreate from "./Components/Patients/appointmentCreate";
+import AppointmentCreate from "./Components/service/appointmentCreate";
+import ViewAllAppointments from "./Components/admin/viewAllAppointments";
 import {
     BrowserRouter,
     Routes,
@@ -58,8 +59,13 @@ function App() {
                 </ProtectedRoute>
             } />
             <Route path="appointmentCreate" element={
-                <ProtectedRoute allowedRoles={['patient']}>
+                <ProtectedRoute allowedRoles={['patient', 'admin']}>
                     <AppointmentCreate />
+                </ProtectedRoute>
+            } />
+            <Route path="appointmentView" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <ViewAllAppointments />
                 </ProtectedRoute>
             } />
         </Routes>
