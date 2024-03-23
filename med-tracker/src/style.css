@@ -293,9 +293,11 @@ span {
 }
 
 .statusBadge.ontime {
-    background-color: rgb(94, 109, 219); /* Light blue for on-time appointments */
+    background-color: rgb(173, 94, 219); /* Light blue for on-time appointments */
 }
-
+.statusBadge.finished {
+    background-color: rgb(51 20 197);
+}
 .statusBadge.accepted {
     background-color: #5cb85c; /* Green for accepted appointments */
 }
