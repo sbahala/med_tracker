@@ -9,6 +9,7 @@ import DoctorDashboard from "./Components/doctor/doctorDashboard";
 import AppointmentRecords from "./Components/Patients/appointmentRecords";
 import AppointmentCreate from "./Components/service/appointmentCreate";
 import ViewAllAppointments from "./Components/admin/viewAllAppointments";
+import EditExistingAccounts from "./Components/admin/editExistingAccounts";
 import {
     BrowserRouter,
     Routes,
@@ -66,6 +67,11 @@ function App() {
             <Route path="appointmentView" element={
                 <ProtectedRoute allowedRoles={['admin']}>
                     <ViewAllAppointments />
+                </ProtectedRoute>
+            } />
+            <Route path="editExistingAccounts" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                     <EditExistingAccounts/>
                 </ProtectedRoute>
             } />
         </Routes>

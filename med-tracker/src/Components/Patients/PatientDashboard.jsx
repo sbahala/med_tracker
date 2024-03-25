@@ -29,21 +29,18 @@ const PatientDashboard = () => {
     return(
         <div >
             <header className="fixed-header"><h1>Welcome to Patient Dashboard</h1></header>
-            
             <main className="content">
-                <button onClick={handleSetupAccount}>Edit Account</button>
-                <button onClick={handleViewAppointments}>View Appointments Records</button>
-                <button onClick={handleCreateAppointments}>Create Appointments</button>
-
+                <div className="appointmentSelectionContainer">
+                <button onClick={handleSetupAccount} className="selectionButton">Edit Account</button>
+                <button onClick={handleViewAppointments} className="selectionButton">View Appointments Records</button>
+                <button onClick={handleCreateAppointments} className="selectionButton">Create Appointments</button>
+                </div>
             </main>
-
-    
-            <footer className = "footer">
-            <button className="Logout" onClick={handleSignOut}>
+            <footer className="footer">
+                <button className="Logout" onClick={handleSignOut}>
                 Log Out
-            </button>
-            </footer>
-            
+                </button>
+            </footer>           
         </div>
     )
     

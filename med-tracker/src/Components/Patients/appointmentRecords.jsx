@@ -92,7 +92,9 @@ const AppointmentRecords = () => {
                     Object.entries(groupedAppointments).map(([status, appointments]) => (
                         <div key={status}>
                                 <Typography variant="h5" style={{ marginTop: '20px' }}>
-                                    <span className={`statusBadge ${status.toLowerCase()}`}>{status}</span>
+                                    <span className={`statusBadge ${status.toLowerCase()}`}>
+                                        {status === 'Finished' ? 'Diagnosis Complete' : status}
+                                    </span>
                                 </Typography>
                                 {appointments.map((appointment, index) => (
                                     <Accordion key={appointment.id} className={isFutureAppointment(appointment.date) ? "futureAppointment" : "pastAppointment"}>
