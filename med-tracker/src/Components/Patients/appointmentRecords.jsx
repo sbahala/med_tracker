@@ -50,6 +50,7 @@ const AppointmentRecords = () => {
                 const appointmentsQuery = query(collection(db, "appointments"), where("patientId", "==", currentUser.uid));
                 const querySnapshot = await getDocs(appointmentsQuery);
                 const appointmentsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                appointmentsData.sort((a, b) => new Date(a.date) - new Date(b.date)); 
                 setAppointments(appointmentsData);
             }
         };

@@ -42,7 +42,8 @@ const DoctorDashboard = () => {
                 }
                 appointments.push(appointmentData);
             }
-    
+
+            appointments.sort((a, b) => new Date(a.date) - new Date(b.date));  
           if (status === 'Pending') {
             setPendingAppointments(appointments.filter(appt => appt.status === 'Pending'));
           } else if (status === 'OnTime') {
@@ -311,13 +312,13 @@ const DoctorDashboard = () => {
                                         <p>Allergies: {appointment.allergies || "Yet to be filled"}</p>
                                         <p>Blood Pressure: {appointment.bloodPressure || "Yet to be filled"}</p>
                                         <p>Family Medical History : {appointment.familyMedicalHistory || "Yet to be filled"}</p>
-                                        <button onClick={() => handleSelectOnTimeAppointment(appointment)} >Enter Diagnosis</button>
+                                        <button onClick={() => handleSelectOnTimeAppointment(appointment)} >Edit Diagnosis</button>
                                         {isDiagnosisSubmitted && selectedOnTimeAppointment && selectedOnTimeAppointment.appointmentId === appointment.appointmentId && (
                                             <button
                                                 onClick={() => handleCompleteDiagnosis(appointment.appointmentId)}
                                                 className="button completeDiagnosisButton"
                                             >
-                                                Diagnosis Complete
+                                                Completed Diagnosis
                                             </button>
                                         )}
                                     </div>
@@ -330,8 +331,8 @@ const DoctorDashboard = () => {
                         {selectedAppointmentType === 'OnTime' && selectedOnTimeAppointment && !isDiagnosisSubmitted &&(
                             <div>
                                 <h3>Enter Diagnosis and Treatment Plan</h3>
-                                <textarea className="textareaField" placeholder="Diagnosis" value={selectedOnTimeDiagnosis} onChange={handleChangeDiagnosis} />
-                                <textarea className="textareaField" placeholder="Treatment Plan" value={selectedOnTimeTreatmentPlan} onChange={handleChangeTreatmentPlan} />
+                                <div className="formRow"><div className="formGroup"><label for="diagnosis">Diagnosis</label><textarea className="textareaField" name ="diagnosis"placeholder="Enter Diagnosis Here " value={selectedOnTimeDiagnosis} onChange={handleChangeDiagnosis} /></div></div>
+                                <div className="formRow"><div className="formGroup"><label for="treatmentPlan">Treatment Plan</label><textarea className="textareaField" name="treatmentPlan"placeholder="Enter Treatment Plan Here " value={selectedOnTimeTreatmentPlan} onChange={handleChangeTreatmentPlan} /></div></div>
                                 <button onClick={handleUpdateOnTimeAppointment}>Submit Diagnosis and Treatment Plan</button>
                             </div>
                         )}

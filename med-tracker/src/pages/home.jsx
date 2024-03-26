@@ -1,20 +1,20 @@
 import '../style.css';
 import React from "react";
 import { useNavigate } from "react-router-dom"
-import {signOut} from "firebase/auth";
-import {auth} from "../firebase";
+//import {signOut} from "firebase/auth";
+//import {auth} from "../firebase";
 
 const Home = () => {
     const navigate = useNavigate();
 
-    const handleSignOut = async () => {
+    /*const handleSignOut = async () => {
         try {
             await signOut(auth);
             navigate('/');
         } catch (error) {
             console.error("Error signing out: ", error);
         }
-    };
+    };*/
 
     return (
         <div className="formContainer">
@@ -27,7 +27,6 @@ const Home = () => {
                 <div className="buttonsContainer">
                     <button onClick={() => navigate('/login')}>Login</button>
                     <button onClick={() => navigate('/signup')}>Sign Up</button>
-                    <button onClick={handleSignOut}>Sign Out</button>
                 </div>
                 
             </div>
