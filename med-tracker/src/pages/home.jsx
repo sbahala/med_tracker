@@ -27,7 +27,6 @@ const Home = () => {
                 <div className="buttonsContainer">
                     <button onClick={() => navigate('/login')}>Login</button>
                     <button onClick={() => navigate('/signup')}>Sign Up</button>
-                    <button onClick={handleSignOut}>Sign Out</button>
                 </div>
                 
             </div>

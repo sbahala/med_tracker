@@ -54,6 +54,11 @@ const ViewAllAppointments = () => {
     const backAdminDashboard=()=>{
         navigate("/adminDashboard");
     }
+    const isFutureAppointment = (appointmentDate) => {
+        const today = new Date();
+        const appointment = new Date(appointmentDate);
+        return appointment > today;
+    };
 
     return (
         <div className="setAccountDetailsContainer">
@@ -64,9 +69,11 @@ const ViewAllAppointments = () => {
                 {Object.keys(groupedAppointments).length > 0 ? (
                     Object.entries(groupedAppointments).map(([status, appointmentsGroup]) => (
                         <div key={status}>
-                            <Typography variant="h6" style={{ marginTop: '20px', textTransform: 'capitalize' }}>{status}</Typography>
+                            <Typography variant="h6" style={{ marginTop: '20px', textTransform: 'capitalize' }}>
+                                <span className={`statusBadge ${status.toLowerCase()}`}>{status === 'Finished' ? 'Diagnosis Complete' : status}</span>
+                            </Typography>
                             {appointmentsGroup.map((appointment) => (
-                                <Accordion key={appointment.id} className="appointmentAccordion">
+                                <Accordion key={appointment.id} className={isFutureAppointment(appointment.date) ? "futureAppointment" : "pastAppointment"}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                         <Typography>{appointment.date} - {appointment.patientName}</Typography>
                                     </AccordionSummary>

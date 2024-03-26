@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from "../../firebase";
 import { auth } from '../../firebase';
 import { signOut } from "firebase/auth";
-import { doc,updateDoc,collection, query, where, getDocs } from 'firebase/firestore';
+import { doc,updateDoc,collection, query, where, getDocs,getDoc } from 'firebase/firestore';
 
 const NurseDashboard = () => {
     const navigate = useNavigate();
@@ -13,6 +13,13 @@ const NurseDashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [editingVitalsFor, setEditingVitalsFor] = useState(null);
     const [selectedAppointmentStatus, setSelectedAppointmentStatus] = useState('');
+    const [validationErrors, setValidationErrors] = useState({
+        height: '',
+        weight: '',
+        bloodPressure: '',
+        allergies: '',
+        familyMedicalHistory: '',
+      });
     const fetchAppointments = useCallback(async (status) => {
         setIsLoading(true);
         const appointmentsRef = collection(db, "appointments");
@@ -22,19 +29,30 @@ const NurseDashboard = () => {
       
         try {
           const querySnapshot = await getDocs(q);
-          const newAppointments = querySnapshot.docs.map((documentSnapshot) => ({
-            appointmentId: documentSnapshot.id,
-            ...documentSnapshot.data(),
-          }));
-          
-          setAppointmentDetails(newAppointments);
-    
-        } catch (error) {
-          console.error("Error fetching appointments: ", error);
-          alert(`Error fetching appointments: ${error.message}`);
-        } finally {
-          setIsLoading(false); // Ensure we always set loading to false after the operation
+          const appointmentsWithPatientName = [];
+        for (const dataVal of querySnapshot.docs) {
+            const appointmentData = { appointmentId: dataVal.id, ...dataVal.data() };
+            const patientRef = doc(db, "users", appointmentData.patientId);
+            const patientDoc = await getDoc(patientRef);
+            if (patientDoc.exists()) {
+                const patientData = patientDoc.data();
+                appointmentsWithPatientName.push({
+                    ...appointmentData,
+                    patientName: `${patientData.firstName} ${patientData.lastName}`, // Adding patient's name
+                });
+            } else {
+                appointmentsWithPatientName.push(appointmentData); // In case patient details are missing
+            }
         }
+
+        appointmentsWithPatientName.sort((a, b) => new Date(a.date) - new Date(b.date));      
+        setAppointmentDetails(appointmentsWithPatientName);
+    } catch (error) {
+        console.error("Error fetching appointments: ", error);
+        alert(`Error fetching appointments: ${error.message}`);
+    } finally {
+        setIsLoading(false); // Always turn off loading indicator
+    }
       }, []);
     
     useEffect(() => {
@@ -73,14 +91,55 @@ const NurseDashboard = () => {
                 appt.appointmentId === appointmentId ? { ...appt, [name]: value } : appt
             )
         );
+        let error = '';
+        if (name === 'height' && !validateHeight(value)) {
+            error = 'Height is invalid.';
+        } else if (name === 'weight' && !validateWeight(value)) {
+            error = 'Weight is invalid.';
+        } else if (name === 'bloodPressure' && !validateBloodPressure(value)) {
+            error = 'Blood pressure is invalid.';
+        } else if ((name === 'allergies' || name === 'familyMedicalHistory') && !value.trim()) {
+            error = `${name} cannot be empty.`;
+        }
+
+        // Update validation error state
+        setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: error,
+        }));
     };
     const handleBackToSelection = () => {
         setSelectedAppointmentStatus('');
         setAppointmentDetails(null); // Optionally clear any previously loaded appointment details
     };
-
+    function validateHeight(height) {
+        return /^([1-9]\d*(\.\d+)?|0\.\d+)$/.test(height);
+      }
+      
+      function validateWeight(weight) {
+        return /^([1-9]\d*(\.\d+)?|0\.\d+)$/.test(weight);
+      }
+      
+      function validateBloodPressure(bp) {
+        return /^\d{2,3}\/\d{2,3}$/.test(bp);
+      }
+      
+      function validateText(input) {
+        return input.length <= 200; // Example max length
+      }
+      
     const handleVitalsSubmit = async (appointmentId) => {
         const appointmentToUpdate = appointmentDetails.find(appt => appt.appointmentId === appointmentId);
+        if (
+            !validateHeight(appointmentToUpdate.height) ||
+            !validateWeight(appointmentToUpdate.weight) ||
+            !validateBloodPressure(appointmentToUpdate.bloodPressure) ||
+            !validateText(appointmentToUpdate.allergies) ||
+            !validateText(appointmentToUpdate.familyMedicalHistory)
+          ) {
+            alert('Please check your inputs for errors.');
+            return;
+          }
         const appointmentRef = doc(db, "appointments", appointmentId);
         if (!appointmentToUpdate || !(appointmentToUpdate.height?.trim() ?? '') || !(appointmentToUpdate.weight?.trim() ?? '' ) || !(appointmentToUpdate.bloodPressure?.trim() ?? '') || !(appointmentToUpdate.allergies?.trim() ?? '') || !(appointmentToUpdate.familyMedicalHistory?.trim() ?? '')) {
             alert('Vital values are required !!');
@@ -126,13 +185,8 @@ const NurseDashboard = () => {
                 status: newStatus,
             });
             alert(`Appointment ${newStatus.toLowerCase()} successfully.`);
-            if (newStatus === 'OnTime') {
-                // Refresh the list of accepted appointments instead of searching by patient name
-                fetchAppointments('Accepted'); // Change this to the appropriate status if needed
-            } else {
-                // Otherwise, handle as previously, which may include searching by patient name
-                handleSearch(); 
-            }
+            const remainingAppointments = appointmentDetails.filter(appt => appt.appointmentId !== appointmentId);
+            setAppointmentDetails(remainingAppointments);
         } catch (error) {
             console.error('Error updating appointment status: ', error);
             alert('Failed to update appointment status.');
@@ -165,7 +219,8 @@ const NurseDashboard = () => {
                                 <div key={appointment.appointmentId} className="appointmentDetailsContainer">
                                     <div className="appointmentDetail">
                                     <div>
-                                    <p><strong>Appointment {index + 1} </strong></p>
+                                    <p>Appointment ID: {appointment.appointmentId}</p>
+                                    <p> Patient Name:{appointment.patientName}</p>
                                     <p>Date: {appointment.date}</p>
                                     <p>Time: {appointment.time}</p>
                                     <p>Department: {appointment.departmentName}</p>
@@ -195,14 +250,14 @@ const NurseDashboard = () => {
                                     )}
                                     </div>
                                         {editingVitalsFor === appointment.appointmentId && !appointment.vitalsSubmitted && (
-                                            <div>
+                                            <div className="vitalsForm">
                                                 {/* Vitals form fields and submit button */}
                                                 <h3>Fill Additional Patient Details</h3>
-                                                <input type="text" name="height" placeholder="Height (feet)" value={appointment.height || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'height', e.target.value)} />
-                                                <input type="text" name="weight" placeholder="Weight (Lbs)" value={appointment.weight || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'weight', e.target.value)} />
-                                                <input type="text" name="bloodPressure" placeholder="Blood Pressure (mmHg)" value={appointment.bloodPressure || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'bloodPressure', e.target.value)} />
-                                                <textarea className="textareaField"  name="allergies" placeholder="Allergies" value={appointment.allergies || "Yet to be filled"} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'allergies', e.target.value)} />
-                                                <textarea className="textareaField"  name="familyMedicalHistory" placeholder="Family Medical History" value={appointment.familyMedicalHistory || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'familyMedicalHistory', e.target.value)} />
+                                                <div className="formRow"><div className="formGroup"><label for="height">Height (feet)</label><input type="text" name="height" placeholder="Height (6.25)" value={appointment.height || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'height', e.target.value)} className={!validateHeight(appointment.height) ? 'inputError' : ''}/>{validationErrors.height && <div className="error">{validationErrors.height}</div>}</div></div>
+                                                <div className="formRow"><div className="formGroup"><label for="weight">Weight (Lbs)</label><input type="text" name="weight" placeholder="Weight (150)" value={appointment.weight || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'weight', e.target.value)} className={!validateWeight(appointment.height) ? 'inputError' : ''}/>{validationErrors.weight && <div className="error">{validationErrors.weight}</div>}</div></div>
+                                                <div className="formRow"><div className="formGroup"><label for="bloodPressure">Blood Pressure (mmHg)</label><input type="text" name="bloodPressure" placeholder="Blood Pressure (135/85)" value={appointment.bloodPressure || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'bloodPressure', e.target.value)} className={!validateBloodPressure(appointment.bloodPressure) ? 'inputError' : ''}/>{validationErrors.bloodPressure && <div className="error">{validationErrors.bloodPressure}</div>}</div></div>
+                                                <div className="formRow"><div className="formGroup"><label for="allergies">Allergies</label><textarea className="textareaField"  name="allergies" placeholder="Allergies" value={appointment.allergies || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'allergies', e.target.value)} />{validationErrors.allergies && <div className="error">{validationErrors.allergies}</div>}</div></div>
+                                                <div className="formRow"><div className="formGroup"><label for="familyMedicalHistory">Family Medical History</label><textarea className="textareaField"  name="familyMedicalHistory" placeholder="Family Medical History" value={appointment.familyMedicalHistory || ''} onChange={(e) => handleVitalsChange(appointment.appointmentId, 'familyMedicalHistory', e.target.value)} />{validationErrors.familyMedicalHistory && <div className="error">{validationErrors.familyMedicalHistory}</div>}</div></div>
                                                 <button onClick={() => handleVitalsSubmit(appointment.appointmentId)}>Submit Details</button>
                                             </div>
                                         )}
@@ -210,7 +265,7 @@ const NurseDashboard = () => {
                                 ))}
                             </div>
                         ) : !isLoading && (
-                            <p>No appointments found. Search for a patient to see their appointments.</p>
+                            <p>Search for a patient with First Name and Last Name to see their appointments.</p>
                         )}
                     </>
                 ) : (
@@ -244,15 +299,21 @@ const NurseDashboard = () => {
     const q = query(appointmentsRef, where("patientId", "==", patientId), where("status", "==", status));
     const querySnapshot = await getDocs(q);
     const appointments = [];
-    querySnapshot.forEach((doc) => {
-        //const data = doc.data();
-        appointments.push({ appointmentId: doc.id, ...doc.data() });
-        /*if (["Pending", "Accepted", "OnTime"].includes(data.status)) {
-        if (["Pending"].includes(data.status)) {
-            appointments.push({ appointmentId: doc.id, ...data });
-          }*/
-    });
-    return appointments;
+    for (const dataVal of querySnapshot.docs) {
+        const appointmentData = { appointmentId: dataVal.id, ...dataVal.data() };
+        const patientRef = doc(db, "users", appointmentData.patientId);
+        const patientDoc = await getDoc(patientRef);
+        if (patientDoc.exists()) {
+          const patientData = patientDoc.data();
+          appointments.push({
+            ...appointmentData,
+            patientName: `${patientData.firstName} ${patientData.lastName}`, 
+          });
+        } else {
+          appointments.push(appointmentData);
+        }
+      }
+      return appointments;
   }
   
 

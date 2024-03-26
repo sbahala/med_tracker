@@ -417,3 +417,34 @@ span {
     width: auto; 
     padding: 8px 16px;
 }
+
+.vitalsForm {
+    display: grid;
+    gap: 20px; /* Space between grid items */
+  }
+  
+  .formRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; /* Space between grid items */
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formGroup label {
+    margin-bottom: 5px;
+  }
+  
+  .formGroup input,
+  .formGroup textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .inputError {
+    border: 1px solid red;
+  }
