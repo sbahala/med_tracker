@@ -51,7 +51,7 @@ const NurseDashboard = () => {
         console.error("Error fetching appointments: ", error);
         alert(`Error fetching appointments: ${error.message}`);
     } finally {
-        setIsLoading(false); // Always turn off loading indicator
+        setIsLoading(false);
     }
       }, []);
     
@@ -63,7 +63,7 @@ const NurseDashboard = () => {
 
     const handleSearch = async () => {
       setIsLoading(true);
-      const fetchedPatientDetails = await searchPatientByName(firstName, lastName);
+      const fetchedPatientDetails = await searchPatientByName(firstName.trim(), lastName.trim());
       if (fetchedPatientDetails.length > 0) { // Assuming there can be multiple patients with the same name
         // For simplicity, taking the first match. You may want to handle multiple matches differently.
         const patient = fetchedPatientDetails[0];
@@ -197,6 +197,13 @@ const NurseDashboard = () => {
         return requiredVitals.every(vital => appointment[vital] && appointment[vital].trim() !== '');
     };    
 
+    const handlePendingAppointments=()=>{
+        navigate('/nurseAppointmentsView');
+    }
+    const handleAcceptedAppointments=()=>{
+        navigate('/nurseAcceptedAppointmentsView');
+    }
+
     return (
       <div>
          <header className="fixed-header"><h1>Welcome to Nurse Dashboard</h1></header>
@@ -270,8 +277,8 @@ const NurseDashboard = () => {
                     </>
                 ) : (
                     <div className="appointmentSelectionContainer">
-                        <button onClick={() => handleAppointmentSelection('Pending')} className={selectedAppointmentStatus === 'Pending' ? 'selectionButton active' : 'selectionButton'} >Pending Appointments</button>
-                        <button onClick={() => handleAppointmentSelection('Accepted')} className={selectedAppointmentStatus === 'Accepted' ? 'selectionButton active' : 'selectionButton'}>Accepted Appointments</button>
+                        <button onClick={handlePendingAppointments} className="selectionButton">View Pending Appointments</button>
+                        <button onClick={handleAcceptedAppointments} className="selectionButton">View Accepted Appointments</button>
                     </div>
             )}
         </main>

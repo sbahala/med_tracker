@@ -10,12 +10,18 @@ import AppointmentRecords from "./Components/Patients/appointmentRecords";
 import AppointmentCreate from "./Components/service/appointmentCreate";
 import ViewAllAppointments from "./Components/admin/viewAllAppointments";
 import EditExistingAccounts from "./Components/admin/editExistingAccounts";
+import NurseAppointmentsView from "./Components/nurse/nurseAppointmentsView";
+import NurseAcceptedAppointmentsView from "./Components/nurse/nurseAcceptedAppointmentsView";
+import DoctorPendingAppointmentsView from "./Components/doctor/doctorPendingAppointmentsView";
+import DoctorCompletedAppointments from "./Components/doctor/doctorCompletedAppointments";
+import DoctorEquipmentView from "./Components/doctor/doctorEquipmentView";
 import {
     BrowserRouter,
     Routes,
     Route
 } from "react-router-dom"
 import {ProtectedRoute} from "./context/protectedRoute";
+import DoctorOntimeAppointments from "./Components/doctor/doctorOntimeAppointments";
 //import {useContext} from "react";
 //import {AuthContext} from "./context/authContext";
 
@@ -72,6 +78,36 @@ function App() {
             <Route path="editExistingAccounts" element={
                 <ProtectedRoute allowedRoles={['admin']}>
                      <EditExistingAccounts/>
+                </ProtectedRoute>
+            } />
+            <Route path="nurseAppointmentsView" element={
+                <ProtectedRoute allowedRoles={['nurse']}>
+                     <NurseAppointmentsView/>
+                </ProtectedRoute>
+            } />
+            <Route path="nurseAcceptedAppointmentsView" element={
+                <ProtectedRoute allowedRoles={['nurse']}>
+                     <NurseAcceptedAppointmentsView/>
+                </ProtectedRoute>
+            } />
+            <Route path="doctorPendingAppointmentsView" element={
+                <ProtectedRoute allowedRoles={['doctor']}>
+                     <DoctorPendingAppointmentsView/>
+                </ProtectedRoute>
+            } />
+            <Route path="doctorOntimeAppointments" element={
+                <ProtectedRoute allowedRoles={['doctor']}>
+                     <DoctorOntimeAppointments/>
+                </ProtectedRoute>
+            } />
+            <Route path="doctorCompletedAppointments" element={
+                <ProtectedRoute allowedRoles={['doctor']}>
+                     <DoctorCompletedAppointments/>
+                </ProtectedRoute>
+            } />
+            <Route path="doctorEquipmentView" element={
+                <ProtectedRoute allowedRoles={['doctor']}>
+                     <DoctorEquipmentView/>
                 </ProtectedRoute>
             } />
         </Routes>
