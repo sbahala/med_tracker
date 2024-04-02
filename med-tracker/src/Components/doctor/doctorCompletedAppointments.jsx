@@ -46,7 +46,7 @@ const CustomInput = React.forwardRef(({ value, onClick }, ref) => (
 const DoctorCompletedAppointments = () => {
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
-    const [patientNames, setPatientNames] = useState({});
+    //const [patientNames, setPatientNames] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isPatientDetailsModalOpen, setIsPatientDetailsModalOpen] = useState(false);
     const [currentAppointmentDetails, setCurrentAppointmentDetails] = useState({});
@@ -80,7 +80,7 @@ const DoctorCompletedAppointments = () => {
             }
         }
 
-        setPatientNames(newPatientNames);
+        //setPatientNames(newPatientNames);
         setAppointments(newAppointments);
     }, [selectedDate]);
 
@@ -98,7 +98,7 @@ const DoctorCompletedAppointments = () => {
         setIsPatientDetailsModalOpen(true);
     }, []);
     
-    const data = useMemo(() => appointments, [appointments]);
+    //const data = useMemo(() => appointments, [appointments]);
 
     const columns = useMemo(() => [
         {
