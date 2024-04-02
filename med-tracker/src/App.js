@@ -1,3 +1,10 @@
+import {
+    BrowserRouter,
+    Routes,
+    Route
+} from "react-router-dom"
+import {ProtectedRoute} from "./context/protectedRoute";
+
 import Signup from "./pages/signup";
 import Login from "./pages/login";
 import Home from "./pages/home";
@@ -15,13 +22,9 @@ import NurseAcceptedAppointmentsView from "./Components/nurse/nurseAcceptedAppoi
 import DoctorPendingAppointmentsView from "./Components/doctor/doctorPendingAppointmentsView";
 import DoctorCompletedAppointments from "./Components/doctor/doctorCompletedAppointments";
 import DoctorEquipmentView from "./Components/doctor/doctorEquipmentView";
-import {
-    BrowserRouter,
-    Routes,
-    Route
-} from "react-router-dom"
-import {ProtectedRoute} from "./context/protectedRoute";
 import DoctorOntimeAppointments from "./Components/doctor/doctorOntimeAppointments";
+import ViewAllEquipments from "./Components/admin/viewAllEquipments";
+
 //import {useContext} from "react";
 //import {AuthContext} from "./context/authContext";
 
@@ -107,7 +110,13 @@ function App() {
             } />
             <Route path="doctorEquipmentView" element={
                 <ProtectedRoute allowedRoles={['doctor']}>
-                     <DoctorEquipmentView/>
+                    <DoctorEquipmentView/>
+                </ProtectedRoute>
+            } />
+
+            <Route path="viewEquipments" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <ViewAllEquipments/>
                 </ProtectedRoute>
             } />
         </Routes>
