@@ -51,7 +51,7 @@ const NurseDashboard = () => {
         console.error("Error fetching appointments: ", error);
         alert(`Error fetching appointments: ${error.message}`);
     } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Always turn off loading indicator
     }
       }, []);
     
@@ -277,6 +277,8 @@ const NurseDashboard = () => {
                     </>
                 ) : (
                     <div className="appointmentSelectionContainer">
+                        <button onClick={() => handleAppointmentSelection('Pending')} className={selectedAppointmentStatus === 'Pending' ? 'selectionButton active' : 'selectionButton'} >Pending Appointments</button>
+                        <button onClick={() => handleAppointmentSelection('Accepted')} className={selectedAppointmentStatus === 'Accepted' ? 'selectionButton active' : 'selectionButton'}>Accepted Appointments</button>
                         <button onClick={handlePendingAppointments} className="selectionButton">View Pending Appointments</button>
                         <button onClick={handleAcceptedAppointments} className="selectionButton">View Accepted Appointments</button>
                     </div>

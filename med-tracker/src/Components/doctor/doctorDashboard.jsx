@@ -269,6 +269,9 @@ const DoctorDashboard = () => {
             <main className="content">
             {showAppointmentButtons && (
                 <div className="appointmentSelectionContainer">
+                    <button onClick={() => handleAppointmentTypeSelection('Pending')} className={selectedAppointmentType === 'Pending' ? 'selectionButton active' : 'selectionButton'} >Pending Appointments</button>
+                    <button onClick={() => handleAppointmentTypeSelection('OnTime')} className={selectedAppointmentType === 'OnTime' ? 'selectionButton active' : 'selectionButton'}>OnTime Appointments</button>
+                    <button onClick={() => handleAppointmentTypeSelection('Finished')} className={selectedAppointmentType === 'Finished' ? 'selectionButton active' : 'selectionButton'}>Completed Appointments</button>
                     <button onClick={handlePendingAppointments} className="selectionButton">View Pending Appointments</button>
                     <button onClick={handleOntimeAppointments} className="selectionButton">View OnTime Appointments</button>
                     <button onClick={handleCompletedAppointments} className="selectionButton">View Completed Appointments</button>
