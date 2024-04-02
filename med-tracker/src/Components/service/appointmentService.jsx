@@ -1,5 +1,9 @@
 import { auth, db } from '../../firebase';
-import {collection, addDoc, getDocs, doc, updateDoc} from 'firebase/firestore';
+import {collection, addDoc, getDocs, doc, updateDoc,getDoc} from 'firebase/firestore';
+
+const requiredPatientFields = [
+    'address', 'dob', 'email', 'firstName', 'gender', 'lastName', 'phoneNumber', 'role', 'uid'
+  ];
 
 export const addAppointment = async (appointmentData) => {
     if (auth.currentUser) {
@@ -23,3 +27,44 @@ export const getAppointments = async () => {
         ...doc.data(),
     }));
 };
+
+export function convertTo12HourFormat(time) {
+   
+    if (!time) return '';
+  
+    // Split the time string into hours and minutes
+    const [hours24, minutes] = time.split(':');
+  
+    // Parse the hours and minutes to numbers
+    const hours = Number(hours24);
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+  
+    // Convert hours from 24-hour to 12-hour format
+    const hours12 = ((hours + 11) % 12) + 1;
+  
+    // Return the formatted time string
+    return `${hours12}:${minutes} ${suffix}`;
+  };
+  
+
+  export async function isPatientProfileComplete(userId) {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+  
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      const missingFields = requiredPatientFields.filter(field => !userData[field]);
+  
+      if (missingFields.length === 0) {
+        // All fields are present
+        return { isComplete: true };
+      } else {
+        // Some fields are missing
+        return { isComplete: false, missingFields: missingFields };
+      }
+    } else {
+      // User document doesn't exist
+      throw new Error("User document does not exist");
+    }
+  };
+  

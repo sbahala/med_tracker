@@ -1,11 +1,13 @@
-import React from 'react';
+import React,{useContext} from 'react';
+import { AuthContext } from '../../context/authContext';
 import {useNavigate} from 'react-router-dom';
 import { auth } from '../../firebase';
 import {signOut} from "firebase/auth";
-
+import {isPatientProfileComplete} from "../service/appointmentService";
 
 const PatientDashboard = () => {
     const navigate = useNavigate();
+    const { currentUser } = useContext(AuthContext);
     const handleSetupAccount=()=>{
         navigate('/editPatientAccount');
     }
@@ -13,9 +15,21 @@ const PatientDashboard = () => {
         navigate('/appointmentRecords');
     }
 
-    const handleCreateAppointments=()=>{
-        navigate('/appointmentCreate');
-    }
+    const handleCreateAppointments = async () => {
+        try {
+          // Replace 'currentUserId' with the actual logged-in user's ID
+          const { isComplete, missingFields } = await isPatientProfileComplete(currentUser.uid);
+      
+          if (isComplete) {
+            navigate('/appointmentCreate');
+          } else {
+            alert(`Please Edit you account. Missing fields: ${missingFields.join(', ')}`);
+          }
+        } catch (error) {
+          console.error("Error checking profile completeness: ", error);
+          alert("There was an issue checking your profile completeness.");
+        }
+      };
 
     const handleSignOut = async () => {
         try {

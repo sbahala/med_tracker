@@ -1,0 +1,18 @@
+[
+    {
+      "id": "equipment1",
+      "name": "Ultrasound Machine",
+      "location": "First floor",
+      "roomNumber": "101",
+      "status": "OK",
+      "lastChecked": "2024-03-29T15:30:00Z"
+    },
+    {
+      "id": "equipment2",
+      "name": "X-Ray Machine",
+      "location": "Second floor",
+      "roomNumber": "201",
+      "status": "Under Maintenance",
+      "lastChecked": "2024-03-28T10:15:00Z"
+    }
+  ]

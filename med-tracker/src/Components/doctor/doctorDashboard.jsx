@@ -21,6 +21,19 @@ const DoctorDashboard = () => {
     const [finishedAppointments, setFinishedAppointments] = useState([]);
     const [viewingAppointmentDetails, setViewingAppointmentDetails] = useState(null);
 
+    const handlePendingAppointments=()=>{
+        navigate('/doctorPendingAppointmentsView');
+    }
+    const handleOntimeAppointments=()=>{
+        navigate('/doctorOntimeAppointments');
+    }
+    const handleCompletedAppointments=()=>{
+        navigate('/doctorCompletedAppointments');
+    }
+    const handleViewEquipments=()=>{
+        navigate('/doctorEquipmentView');
+    }
+
     const fetchAppointments = useCallback(async (status) => {
         setIsLoading(true);
         try {
@@ -259,6 +272,10 @@ const DoctorDashboard = () => {
                     <button onClick={() => handleAppointmentTypeSelection('Pending')} className={selectedAppointmentType === 'Pending' ? 'selectionButton active' : 'selectionButton'} >Pending Appointments</button>
                     <button onClick={() => handleAppointmentTypeSelection('OnTime')} className={selectedAppointmentType === 'OnTime' ? 'selectionButton active' : 'selectionButton'}>OnTime Appointments</button>
                     <button onClick={() => handleAppointmentTypeSelection('Finished')} className={selectedAppointmentType === 'Finished' ? 'selectionButton active' : 'selectionButton'}>Completed Appointments</button>
+                    <button onClick={handlePendingAppointments} className="selectionButton">View Pending Appointments</button>
+                    <button onClick={handleOntimeAppointments} className="selectionButton">View OnTime Appointments</button>
+                    <button onClick={handleCompletedAppointments} className="selectionButton">View Completed Appointments</button>
+                    <button onClick={handleViewEquipments} className="selectionButton">View Equipment Status</button>
                 </div>
             )}
             
