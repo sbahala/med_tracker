@@ -3,13 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTable } from 'react-table';
 import { db } from "../../firebase";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
-import DatePicker from 'react-datepicker';
+import {convertTo12HourFormat} from "../service/appointmentService";
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../style.css';
-import { FiCalendar } from 'react-icons/fi';
-import { format, parseISO } from 'date-fns';
-
-
 function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
     if (!isOpen) return null;
 
@@ -36,59 +32,74 @@ function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
         )
     );
 }
-const CustomInput = React.forwardRef(({ value, onClick }, ref) => (
-    <button className="calendar-button" onClick={onClick} ref={ref}>
-      <FiCalendar />
-      {value}
-    </button>
-  ));
 
 const DoctorCompletedAppointments = () => {
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
     //const [patientNames, setPatientNames] = useState({});
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     const [isPatientDetailsModalOpen, setIsPatientDetailsModalOpen] = useState(false);
     const [currentAppointmentDetails, setCurrentAppointmentDetails] = useState({});
 
 
-    const fetchAppointments = useCallback(async () => {
-        const selectedDateString = format(selectedDate, "yyyy-MM-dd");
+    const fetchCompletedAppointments = useCallback(async () => {
         const q = query(
             collection(db, "appointments"),
-            where("status", "==", "Finished"),
-            where("date", "==", selectedDateString)
+            where("status", "==", "Finished")
         );
         const querySnapshot = await getDocs(q);
-        let newAppointments = [];
-        let newPatientNames = {};
-
+        let enrichedAppointments = [];
         for (const docSnapshot of querySnapshot.docs) {
-            const appointmentData = docSnapshot.data();
+            let appointmentData = docSnapshot.data();
             const userRef = doc(db, "users", appointmentData.patientId);
-            const userSnap = await getDoc(userRef);
-
-            newAppointments.push({
-                serial: newAppointments.length + 1,
+            
+            try {
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    appointmentData.patientName = `${userData.firstName} ${userData.lastName}`;
+                } else {
+                    appointmentData.patientName = 'Unknown';
+                }
+            } catch (error) {
+                console.error("Error fetching patient data:", error);
+                appointmentData.patientName = 'Error fetching name';
+            }
+    
+            enrichedAppointments.push({
+                serial: enrichedAppointments.length + 1,
                 id: docSnapshot.id,
                 ...appointmentData,
-                patientName: userSnap.exists() ? `${userSnap.data().firstName} ${userSnap.data().lastName}` : 'Unknown'
             });
-
-            if (userSnap.exists()) {
-                newPatientNames[appointmentData.patientId] = `${userSnap.data().firstName} ${userSnap.data().lastName}`;
-            }
         }
-
-        //setPatientNames(newPatientNames);
-        setAppointments(newAppointments);
-    }, [selectedDate]);
+        if (selectedDate) {
+            enrichedAppointments = enrichedAppointments.filter(appointment => appointment.date === selectedDate);
+        }
+        if (startTime && endTime) {
+            enrichedAppointments = enrichedAppointments.filter(appointment => {
+                const appointmentTime = appointment.time;
+                return appointmentTime >= startTime && appointmentTime <= endTime;
+            });
+        }
+        setAppointments(enrichedAppointments);
+    }, [selectedDate, startTime, endTime]);
 
     useEffect(() => {
-        fetchAppointments();
-    }, [fetchAppointments]);
+        fetchCompletedAppointments();
+    }, [fetchCompletedAppointments]);
 
+    const handleDateChange = useCallback((event) => {
+        setSelectedDate(event.target.value);
+    }, []);
+   const handleStartTimeChange = useCallback((event) => {
+       setStartTime(event.target.value);
+   }, []);
 
+   const handleEndTimeChange = useCallback((event) => {
+       setEndTime(event.target.value);
+   }, []);
     const backDoctorDashboard = () => {
         navigate("/doctorDashboard");
     };
@@ -109,10 +120,14 @@ const DoctorCompletedAppointments = () => {
             Header: 'Patient Name',
             accessor: 'patientName',
         },
-        /*{
+        {
             Header: 'Date',
             accessor: 'date',
-        },*/
+        },{
+            Header: 'Time',
+            accessor: 'time',
+            Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+            },
         {
             Header: 'Doctor',
             accessor: 'doctorName',
@@ -129,32 +144,8 @@ const DoctorCompletedAppointments = () => {
                     Patient Details
                 </button>
             ),
-        },
-        {
-            Header: () => (
-                <div >
-                    Select Date
-                    <DatePicker
-                        selected={selectedDate}
-                        onChange={date => setSelectedDate(date)}
-                        dateFormat="yyyy-MM-dd"
-                        className="form-control"
-                        customInput={<CustomInput />}
-                    />
-                </div>
-            ),
-            id: 'dateFilter',
-            disableSortBy: true,
-            accessor: 'filterDate',
-            Cell: ({ row }) => {
-                const dateString = row.original.date;
-                if (typeof dateString === 'string') {
-                  return format(parseISO(dateString), "yyyy-MM-dd");
-                }
-                return null; // or a placeholder if the dateString is not available
-              }
         }
-    ], [selectedDate,viewPatientDetails]);
+    ], [viewPatientDetails]);
 
     const {
         getTableProps,
@@ -170,6 +161,16 @@ const DoctorCompletedAppointments = () => {
                 <h1>View Completed Appointments</h1>
             </header>
             <main className="content">
+            <div className="filters">
+                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <input id="dateFilter" type="date" value={selectedDate} onChange={handleDateChange} className="dateFilterInput" />
+                
+                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
+                
+                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+            </div>
                 <table {...getTableProps()} className="appointmentsTable">
                     <thead>
                         {headerGroups.map(headerGroup => (

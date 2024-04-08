@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import { useNavigate } from 'react-router-dom';
-import equipmentData from '../service/equipmentData.json'; // Path to your mock data JSON file
+import { db } from '../../firebase'; 
+import { collection, getDocs } from 'firebase/firestore';
 import '../../style.css';
 const DoctorEquipmentView = () => {
   const [equipment, setEquipment] = useState([]);
@@ -10,11 +11,13 @@ const DoctorEquipmentView = () => {
   useEffect(() => {
     // Fetch data from Firebase or use mock data
     const fetchEquipment = async () => {
-      // Uncomment if fetching from Firebase
-      // const querySnapshot = await getDocs(collection(db, "equipment"));
-      // const equipmentList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const equipmentList = equipmentData; // Use mock data
+      const querySnapshot = await getDocs(collection(db, "equipment"));
+      const equipmentList = querySnapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      }));
       setEquipment(equipmentList);
+
     };
     
     fetchEquipment();
@@ -23,10 +26,8 @@ const DoctorEquipmentView = () => {
   const columns = React.useMemo(
     () => [
       { Header: 'Name', accessor: 'name' },
-      { Header: 'Location', accessor: 'location' },
       { Header: 'Room Number', accessor: 'roomNumber' },
       { Header: 'Status', accessor: 'status' },
-      { Header: 'Last Checked', accessor: 'lastChecked' },
       // If you want to format the lastChecked date, you can use a Cell renderer
     ],
     []

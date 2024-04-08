@@ -24,6 +24,8 @@ import DoctorCompletedAppointments from "./Components/doctor/doctorCompletedAppo
 import DoctorEquipmentView from "./Components/doctor/doctorEquipmentView";
 import DoctorOntimeAppointments from "./Components/doctor/doctorOntimeAppointments";
 import ViewAllEquipments from "./Components/admin/viewAllEquipments";
+import DoctorBookEquipment from "./Components/doctor/doctorBookEquipment";
+import NurseEditEquipmentBookings from "./Components/nurse/nurseEditEquipmentBookings";
 
 //import {useContext} from "react";
 //import {AuthContext} from "./context/authContext";
@@ -117,6 +119,16 @@ function App() {
             <Route path="viewEquipments" element={
                 <ProtectedRoute allowedRoles={['admin']}>
                     <ViewAllEquipments/>
+                </ProtectedRoute>
+            } />
+             <Route path="doctorBookEquipment/:appointmentId" element={
+                <ProtectedRoute allowedRoles={['doctor']}>
+                    <DoctorBookEquipment/>
+                </ProtectedRoute>
+            } />
+             <Route path="nurseEditEquipmentBookings" element={
+                <ProtectedRoute allowedRoles={['nurse']}>
+                    <NurseEditEquipmentBookings/>
                 </ProtectedRoute>
             } />
         </Routes>
