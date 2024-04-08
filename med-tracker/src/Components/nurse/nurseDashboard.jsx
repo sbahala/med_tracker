@@ -203,6 +203,9 @@ const NurseDashboard = () => {
     const handleAcceptedAppointments=()=>{
         navigate('/nurseAcceptedAppointmentsView');
     }
+    const handleEquipmentAppointments=()=>{
+        navigate('/nurseEditEquipmentBookings');
+    }
 
     return (
       <div>
@@ -281,6 +284,7 @@ const NurseDashboard = () => {
                         <button onClick={() => handleAppointmentSelection('Accepted')} className={selectedAppointmentStatus === 'Accepted' ? 'selectionButton active' : 'selectionButton'}>Accepted Appointments</button>
                         <button onClick={handlePendingAppointments} className="selectionButton">View Pending Appointments</button>
                         <button onClick={handleAcceptedAppointments} className="selectionButton">View Accepted Appointments</button>
+                        <button onClick={handleEquipmentAppointments} className="selectionButton">Edit Equipment Appointments</button>
                     </div>
             )}
         </main>

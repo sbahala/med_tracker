@@ -105,12 +105,12 @@ const NurseAcceptedAppointmentsView =()=>{
    const navigate = useNavigate();
    const [appointments, setAppointments] = useState([]);
    const [patientNames, setPatientNames] = useState({});
-   const now = new Date();
-   const initialStartTime = now.toISOString().split('T')[1].substring(0, 5); // "HH:MM" format
-   const initialEndTime = '23:59'; // End of the day
-
-   const [startTime, setStartTime] = useState(initialStartTime);
-   const [endTime, setEndTime] = useState(initialEndTime);
+   //const now = new Date();
+   //const initialStartTime = now.toISOString().split('T')[1].substring(0, 5); // "HH:MM" format
+   //const initialEndTime = '23:59'; // End of the day
+   const [filterDate, setFilterDate] = useState(''); 
+   const [startTime, setStartTime] = useState('');
+   const [endTime, setEndTime] = useState('');
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
    const [currentVitals, setCurrentVitals] = useState({
@@ -123,20 +123,30 @@ const NurseAcceptedAppointmentsView =()=>{
  
    
    const fetchAppointments = useCallback(async () => {
-       const today = new Date().toISOString().split('T')[0];
+       //const today = new Date().toISOString().split('T')[0];
        const q = query(
            collection(db, "appointments"),
-           where("status", "==", "Accepted"),
-           where("date", "==", today)
+           where("status", "==", "Accepted")
        );
        const querySnapshot = await getDocs(q);
-       const fetchedAppointments = querySnapshot.docs.map((doc, index) => ({
+       let fetchedPendingAppointments = querySnapshot.docs.map((doc, index) => ({
            serial: index + 1,
            id: doc.id,
            ...doc.data()
        }));
+       if (filterDate) {
+        fetchedPendingAppointments = fetchedPendingAppointments.filter(appointment => appointment.date === filterDate);
+     }
+    
+    // Local filtering for start time and end time
+        if (startTime && endTime) {
+            fetchedPendingAppointments = fetchedPendingAppointments.filter(appointment => {
+                const appointmentTime = appointment.time; // Assuming 'time' is stored in 'HH:MM' format
+                return appointmentTime >= startTime && appointmentTime <= endTime;
+            });
+        }
        const names = {};
-       for (const appointment of fetchedAppointments) {
+       for (const appointment of fetchedPendingAppointments) {
            const userRef = doc(db, "users", appointment.patientId);
            const userSnap = await getDoc(userRef);
            if (userSnap.exists()) {
@@ -145,8 +155,8 @@ const NurseAcceptedAppointmentsView =()=>{
            }
        }
        setPatientNames(names);
-       setAppointments(fetchedAppointments);
-   }, []);
+       setAppointments(fetchedPendingAppointments);
+   }, [filterDate, startTime, endTime]);
 
    useEffect(() => {
        fetchAppointments();
@@ -240,6 +250,10 @@ const updatePatientVitals = async (appointmentId, vitals) => {
   const backNurseDashboard=()=>{
     navigate("/nurseDashboard");
 }
+    const handleDateChange = useCallback((event) => {
+        setFilterDate(event.target.value);
+    }, []);
+
    const handleStartTimeChange = useCallback((event) => {
        setStartTime(event.target.value);
    }, []);
@@ -271,7 +285,11 @@ const updatePatientVitals = async (appointmentId, vitals) => {
        {
            Header: 'Date',
            accessor: 'date',
-       },
+       },{
+        Header: 'Time',
+        accessor: 'time',
+        Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+        },
        {
            Header: 'Doctor',
            accessor: 'doctorName',
@@ -279,34 +297,6 @@ const updatePatientVitals = async (appointmentId, vitals) => {
        {
            Header: 'Department Name',
            accessor: 'departmentName',
-       },
-       {
-           Header: () => (
-               <div>
-                   <div>
-                   Start Time
-                   <input
-                       type="time"
-                       value={startTime}
-                       onChange={handleStartTimeChange}
-                       className="timeFilterInput"
-                   />
-                   </div>
-                   <div>
-                   End Time
-                   <input
-                       type="time"
-                       value={endTime}
-                       onChange={handleEndTimeChange}
-                       className="timeFilterInput"
-                   />
-                   </div>
-               </div>
-           ),
-           accessor: 'time',
-           Cell: ({ value }) => {
-            return convertTo12HourFormat(value);
-          }
        },
        {
            Header: 'Actions',
@@ -327,7 +317,7 @@ const updatePatientVitals = async (appointmentId, vitals) => {
                </>
            ),
        },
-   ], [updateAppointmentStatus,startTime, endTime,handleStartTimeChange, handleEndTimeChange]);
+   ], [updateAppointmentStatus]);
 
    const {
        getTableProps,
@@ -342,6 +332,15 @@ const updatePatientVitals = async (appointmentId, vitals) => {
                <h1>View Accepted Appointments </h1>
            </header>
            <main className="content">
+                <div className="filters">
+                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <input id="dateFilter" type="date" value={filterDate} onChange={handleDateChange} className="dateFilterInput" />
+                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
+                
+                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+                </div>
            <table {...getTableProps()} className="appointmentsTable">
                <thead>
                    {headerGroups.map(headerGroup => (

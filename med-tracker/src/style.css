@@ -623,5 +623,38 @@ span {
   .submit-button:hover {
     background-color: #0a9396;
   }
-  
+  .filters {
+    margin-bottom: 20px;
+}
+
+.filterLabel {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.dateFilterInput, .timeFilterInput {
+    margin-right: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.equipment-label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+.equipment-selector {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 40px; /* Adjust the height as needed */
+    background-color: white;
+}
+.equipment-booking-container {
+    flex-direction: column;
+    padding: 20px;
+    margin: 20px;
+}
   
