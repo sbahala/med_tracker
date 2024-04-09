@@ -4,8 +4,7 @@ import { db } from "../../firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { AuthContext } from '../../context/authContext';
 import '../../style.css';
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 
 const AppointmentRecords = () => {
     const { currentUser } = useContext(AuthContext);
@@ -21,6 +20,8 @@ const AppointmentRecords = () => {
         address: ''
     });
     const [appointments, setAppointments] = useState([]);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
         if (currentUser && currentUser.uid) {
@@ -62,68 +63,72 @@ const AppointmentRecords = () => {
         navigate("/patientDashboard");
     }
 
-    const isFutureAppointment = (appointmentDate) => {
-        const today = new Date();
-        const appointment = new Date(appointmentDate);
-        return appointment > today;
-    };
-    const renderDetailWithUnit = (value, unit) => {
-        return value ? `${value} ${unit}` : "Yet to be filled";
-      };
-
-    const groupAppointmentsByStatus = (appointments) => {
-        return appointments.reduce((acc, appointment) => {
-            (acc[appointment.status] = acc[appointment.status] || []).push(appointment);
-            return acc;
-        }, {});
+    const handleDialogOpen = (appointment) => {
+        setSelectedAppointment(appointment);
+        setOpenDialog(true);
     };
 
-    const groupedAppointments = groupAppointmentsByStatus(appointments);
+    const handleDialogClose = () => {
+        setOpenDialog(false);
+    };
 
 
     return (
-        <div className="setAccountDetailsContainer">
+        <div className="equipmentContainer">
         <header className="fixed-header">
             <h1>View your Appointments - {patientInfo.firstName} {patientInfo.lastName}</h1>
         </header>
         <main className="content">
-            <section className="appointments">
-                <h2>Appointments History</h2>
-                {Object.keys(groupedAppointments).length > 0 ? (
-                    Object.entries(groupedAppointments).map(([status, appointments]) => (
-                        <div key={status}>
-                                <Typography variant="h5" style={{ marginTop: '20px' }}>
-                                    <span className={`statusBadge ${status.toLowerCase()}`}>
-                                        {status === 'Finished' ? 'Diagnosis Complete' : status}
-                                    </span>
-                                </Typography>
-                                {appointments.map((appointment, index) => (
-                                    <Accordion key={appointment.id} className={isFutureAppointment(appointment.date) ? "futureAppointment" : "pastAppointment"}>
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography>Appointment {index + 1} - {appointment.date}</Typography>
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Typography>Date: {appointment.date}</Typography>
-                                            <Typography>Time: {appointment.time}</Typography>
-                                            <Typography>Department: {appointment.departmentName}</Typography>
-                                            <Typography>Doctor: {appointment.doctorName}</Typography>
-                                            <Typography>Status: {appointment.status}</Typography>
-                                            <Typography>Height: {renderDetailWithUnit(appointment.height, 'feet')}</Typography>
-                                            <Typography>Weight: {renderDetailWithUnit(appointment.weight, 'Lbs')}</Typography>
-                                            <Typography>BloodPressure: {renderDetailWithUnit(appointment.bloodPressure, 'mmHg')}</Typography>
-                                            <Typography>Diagnosis: {appointment.diagnosis || "Yet to be diagnosed"}</Typography>
-                                            <Typography>Treatment: {appointment.treatmentPlan || "Yet to be determined"}</Typography>
-                                            {/* Add more fields as needed */}
-                                        </AccordionDetails>
-                                    </Accordion>
-                                ))}
-                        </div>
-                    ))
-                ) : (
-                    <p>No appointments found.</p>
-                )}
-            </section>
+            <h1>Appointment Records</h1>
+            <table className="appointmentsTable">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Department</th>
+                    <th>Doctor</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                {appointments.map((appointment) => (
+                    <tr key={appointment.id}>
+                        <td>{appointment.date}</td>
+                        <td>{appointment.time}</td>
+                        <td>{appointment.departmentName}</td>
+                        <td>{appointment.doctorName}</td>
+                        <td>{appointment.status}</td>
+                        <td>
+                            <Button variant="outlined" onClick={() => handleDialogOpen(appointment)}>Details</Button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+
+
         </main>
+            <Dialog open={openDialog} onClose={handleDialogClose}>
+                <DialogTitle>Appointment Details</DialogTitle>
+                <DialogContent>
+                    {selectedAppointment && (
+                        <>
+                            <DialogContentText>Height: {selectedAppointment.height} inches</DialogContentText>
+                            <DialogContentText>Weight: {selectedAppointment.weight} lbs</DialogContentText>
+                            <DialogContentText>Blood Pressure: {selectedAppointment.bloodPressure}</DialogContentText>
+                            <DialogContentText>Allergies: {selectedAppointment.allergies || "No Allergies"}</DialogContentText>
+                            <DialogContentText>Family Medical History: {selectedAppointment.familyMedicalHistory || "None"}</DialogContentText>
+                            <DialogContentText>Diagnosis: {selectedAppointment.diagnosis}</DialogContentText>
+                            <DialogContentText>Treatment Plan: {selectedAppointment.treatmentPlan || "No need"}</DialogContentText>
+
+                        </>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
         <footer className="footer">
             <button className="dashboardButton" onClick={backPatientDashboard}>Patient Dashboard</button>
         </footer>
