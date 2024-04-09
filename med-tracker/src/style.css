@@ -491,8 +491,6 @@ span {
     display: flex;
     justify-content: center;
 }
-
-/* Adjust this if you add more buttons or need more space */
 .tableActions button {
     margin: 0 5px;
 }
@@ -541,17 +539,16 @@ span {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #000; /* or any color you prefer */
-    font-size: 1rem; /* adjust as needed */
+    color: #000;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
   .calendar-button:hover {
-    color: #555; /* darker color on hover */
+    color: #555;
   }
-  /* style.css */
 
 .equipment-container {
     max-width: 1000px;
@@ -632,7 +629,7 @@ span {
     font-weight: bold;
 }
 
-.dateFilterInput, .timeFilterInput {
+.dateFilterInput, .timeFilterInput ,.nameFilterInput, .statusFilterInput{
     margin-right: 20px;
     padding: 5px;
     border-radius: 5px;
@@ -649,7 +646,7 @@ span {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    height: 40px; /* Adjust the height as needed */
+    height: 40px;
     background-color: white;
 }
 .equipment-booking-container {

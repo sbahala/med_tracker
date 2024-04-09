@@ -31,18 +31,10 @@ export const getAppointments = async () => {
 export function convertTo12HourFormat(time) {
    
     if (!time) return '';
-  
-    // Split the time string into hours and minutes
     const [hours24, minutes] = time.split(':');
-  
-    // Parse the hours and minutes to numbers
     const hours = Number(hours24);
     const suffix = hours >= 12 ? 'PM' : 'AM';
-  
-    // Convert hours from 24-hour to 12-hour format
     const hours12 = ((hours + 11) % 12) + 1;
-  
-    // Return the formatted time string
     return `${hours12}:${minutes} ${suffix}`;
   };
   
@@ -56,14 +48,11 @@ export function convertTo12HourFormat(time) {
       const missingFields = requiredPatientFields.filter(field => !userData[field]);
   
       if (missingFields.length === 0) {
-        // All fields are present
         return { isComplete: true };
       } else {
-        // Some fields are missing
         return { isComplete: false, missingFields: missingFields };
       }
     } else {
-      // User document doesn't exist
       throw new Error("User document does not exist");
     }
   };

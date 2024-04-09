@@ -13,32 +13,28 @@ const NurseAppointmentsView =()=>{
 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
-    const [filterDate, setFilterDate] = useState(''); // Default to today's date
+    const [filterDate, setFilterDate] = useState('');
     
     const fetchAppointments = useCallback(async () => {
-        // Fetch today's pending appointments
         const q = query(
             collection(db, "appointments"),
             where("status", "==", "Pending")
         );
         const querySnapshot = await getDocs(q);
         let fetchedAppointments = querySnapshot.docs.map((doc, index) => ({
-            serial: index + 1,  // To provide a serial number starting from 1
+            serial: index + 1,
             id: doc.id,
             ...doc.data()
         }));
         if (filterDate) {
             fetchedAppointments = fetchedAppointments.filter(appointment => appointment.date === filterDate);
         }
-        
-        // Local filtering for start time and end time
         if (startTime && endTime) {
             fetchedAppointments = fetchedAppointments.filter(appointment => {
-                const appointmentTime = appointment.time; // Assuming 'time' is stored in 'HH:MM' format
+                const appointmentTime = appointment.time;
                 return appointmentTime >= startTime && appointmentTime <= endTime;
             });
         }
-        // Fetch patient names for each appointment
         const names = {};
         for (const appointment of fetchedAppointments) {
             const userRef = doc(db, "users", appointment.patientId);
@@ -57,7 +53,6 @@ const NurseAppointmentsView =()=>{
     }, [fetchAppointments]);
 
     useEffect(() => {
-        // Reset filters when the component mounts
         setFilterDate('');
         setStartTime('');
         setEndTime('');
@@ -68,7 +63,6 @@ const NurseAppointmentsView =()=>{
     try {
         await updateDoc(appointmentRef, { status });
         alert(`Appointment has been ${status.toLowerCase()} successfully.`);
-        // Filter out the updated appointment from the appointments list
         setAppointments(prevAppointments =>
             prevAppointments.filter(appointment => appointment.id !== id)
         );
@@ -118,7 +112,7 @@ const NurseAppointmentsView =()=>{
         },{
             Header: 'Time',
             accessor: 'time',
-            Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+            Cell: ({ value }) => convertTo12HourFormat(value),
         },
         {
             Header: 'Doctor',
@@ -152,6 +146,12 @@ const NurseAppointmentsView =()=>{
         prepareRow,
     } = useTable({ columns, data });
 
+    const resetFilters = () => {
+        setFilterDate('');
+        setStartTime('');
+        setEndTime('');
+    };    
+
     return (
         <div className="appointmentsContainer">
             <header className="fixed-header">
@@ -159,14 +159,15 @@ const NurseAppointmentsView =()=>{
             </header>
             <main className="content">
             <div className="filters">
-                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <label htmlFor="dateFilter" className="filterLabel">Date :</label>
                 <input id="dateFilter" type="date" value={filterDate} onChange={handleDateChange} className="dateFilterInput" />
                 
-                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <label htmlFor="startTimeFilter" className="filterLabel">From :</label>
                 <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
                 
-                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <label htmlFor="endTimeFilter" className="filterLabel">To :</label>
                 <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+                <button onClick={resetFilters} className="resetButton">Reset Filters</button>
             </div>
             <table {...getTableProps()} className="appointmentsTable">
                 <thead>

@@ -15,7 +15,6 @@ function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
                 <div className="modalContent">
                     <span className="close" onClick={onClose}>&times;</span>
                     <h2>Patient Details</h2>
-                    {/* Render the appointment details here */}
                     <div className="appointmentDetails">
                         <p>Doctor Attended: {appointmentDetails.doctorName}</p>
                         <p>Height: {appointmentDetails.height}</p>
@@ -25,7 +24,6 @@ function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
                         <p>Family Medical History: {appointmentDetails.familyMedicalHistory}</p>
                         <p>Diagnosis: {appointmentDetails.diagnosis}</p>
                         <p>Treatment Plan: {appointmentDetails.treatmentPlan}</p>
-                        {/* Add more details as needed */}
                     </div>
                 </div>
             </div>
@@ -36,7 +34,6 @@ function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
 const DoctorCompletedAppointments = () => {
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
-    //const [patientNames, setPatientNames] = useState({});
     const [selectedDate, setSelectedDate] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
@@ -77,6 +74,18 @@ const DoctorCompletedAppointments = () => {
         if (selectedDate) {
             enrichedAppointments = enrichedAppointments.filter(appointment => appointment.date === selectedDate);
         }
+        if (startTime ) {
+            enrichedAppointments = enrichedAppointments.filter(appointment => {
+                const appointmentTime = appointment.time;
+                return appointmentTime >= startTime;
+            });
+        }
+        if (endTime ) {
+            enrichedAppointments = enrichedAppointments.filter(appointment => {
+                const appointmentTime = appointment.time;
+                return appointmentTime <= endTime;
+            });
+        }
         if (startTime && endTime) {
             enrichedAppointments = enrichedAppointments.filter(appointment => {
                 const appointmentTime = appointment.time;
@@ -108,8 +117,6 @@ const DoctorCompletedAppointments = () => {
         setCurrentAppointmentDetails(appointment);
         setIsPatientDetailsModalOpen(true);
     }, []);
-    
-    //const data = useMemo(() => appointments, [appointments]);
 
     const columns = useMemo(() => [
         {
@@ -126,7 +133,7 @@ const DoctorCompletedAppointments = () => {
         },{
             Header: 'Time',
             accessor: 'time',
-            Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+            Cell: ({ value }) => convertTo12HourFormat(value),
             },
         {
             Header: 'Doctor',
@@ -154,7 +161,11 @@ const DoctorCompletedAppointments = () => {
         rows,
         prepareRow,
     } = useTable({ columns, data: appointments });
-
+    const resetFilters = () => {
+        setSelectedDate('');
+        setStartTime('');
+        setEndTime('');
+    };
     return (
         <div className="appointmentsContainer">
             <header className="fixed-header">
@@ -162,14 +173,15 @@ const DoctorCompletedAppointments = () => {
             </header>
             <main className="content">
             <div className="filters">
-                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <label htmlFor="dateFilter" className="filterLabel">Date :</label>
                 <input id="dateFilter" type="date" value={selectedDate} onChange={handleDateChange} className="dateFilterInput" />
                 
-                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <label htmlFor="startTimeFilter" className="filterLabel">From :</label>
                 <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
                 
-                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <label htmlFor="endTimeFilter" className="filterLabel">To :</label>
                 <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+                <button onClick={resetFilters} className="resetButton">Reset Filters</button>
             </div>
                 <table {...getTableProps()} className="appointmentsTable">
                     <thead>

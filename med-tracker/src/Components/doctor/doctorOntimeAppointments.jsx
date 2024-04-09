@@ -23,6 +23,7 @@ function PatientVitalsModal({ isOpen, onClose, patientVitals,patientAge }) {
             <p>Weight: {patientVitals.weight}</p>
             <p>Age: {patientAge} years</p>
             <p>Blood Pressure: {patientVitals.bloodPressure}</p>
+            <p>Allergies: {patientVitals.allergies}</p>
             <p>Family Medical History: {patientVitals.familyMedicalHistory}</p>
           </div>
         </div>
@@ -144,10 +145,9 @@ const DoctorOntimeAppointments =()=>{
         fetchOnTimeAppointments = fetchOnTimeAppointments.filter(appointment => appointment.date === filterDate);
     }
     
-    // Local filtering for start time and end time
     if (startTime && endTime) {
         fetchOnTimeAppointments = fetchOnTimeAppointments.filter(appointment => {
-            const appointmentTime = appointment.time; // Assuming 'time' is stored in 'HH:MM' format
+            const appointmentTime = appointment.time;
             return appointmentTime >= startTime && appointmentTime <= endTime;
         });
     }
@@ -169,7 +169,6 @@ const DoctorOntimeAppointments =()=>{
    }, [fetchOnTimeAppt]);
 
    const updateAppointmentStatus = useCallback(async (id, status) => {
-    // Reference to the document in the 'appointments' collection
     const appointmentRef = doc(db, "appointments", id);
     const appointmentSnap = await getDoc(appointmentRef);
 
@@ -233,6 +232,7 @@ const updatePatientVitals = async (appointmentId, vitals) => {
             height: patientData.height || '',
             weight: patientData.weight || '',
             bloodPressure: patientData.bloodPressure || '',
+            allergies: patientData.allergies || '',
             familyMedicalHistory: patientData.familyMedicalHistory || ''
         };
         const usersData = doc(db, "users", patientData.patientId);
@@ -260,7 +260,6 @@ const updatePatientVitals = async (appointmentId, vitals) => {
         treatmentPlan: appointmentData.treatmentPlan || '',
       };
     } else {
-      // Return defaults if no vitals are found
       return {
         diagnosis: '',
         treatmentPlan: '',
@@ -308,7 +307,7 @@ const updatePatientVitals = async (appointmentId, vitals) => {
        },{
         Header: 'Time',
         accessor: 'time',
-        Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+        Cell: ({ value }) => convertTo12HourFormat(value),
         },
        {
            Header: 'Doctor',
@@ -320,11 +319,10 @@ const updatePatientVitals = async (appointmentId, vitals) => {
        },{
         Header: 'Patient Vitals',
         id: 'viewVitals',
-        accessor: (row) => row.id, // assuming each row has a unique 'id' field
+        accessor: (row) => row.id,
         Cell: ({ row }) => (
           <button
             onClick={() => {
-              // Fetch the current vitals and open the modal
               viewPatientVitals(row.original.id);
             }}
           >
@@ -367,6 +365,11 @@ const updatePatientVitals = async (appointmentId, vitals) => {
        rows,
        prepareRow,
    } = useTable({ columns, data });
+   const resetFilters = () => {
+    setFilterDate('');
+    setStartTime('');
+    setEndTime('');
+}; 
    return (
        <div className="appointmentsContainer">
            <header className="fixed-header">
@@ -374,14 +377,15 @@ const updatePatientVitals = async (appointmentId, vitals) => {
            </header>
            <main className="content">
            <div className="filters">
-                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <label htmlFor="dateFilter" className="filterLabel">Date :</label>
                 <input id="dateFilter" type="date" value={filterDate} onChange={handleDateChange} className="dateFilterInput" />
                 
-                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <label htmlFor="startTimeFilter" className="filterLabel">From :</label>
                 <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
                 
-                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <label htmlFor="endTimeFilter" className="filterLabel">To :</label>
                 <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+                <button onClick={resetFilters} className="resetButton">Reset Filters</button>
             </div>
            <table {...getTableProps()} className="appointmentsTable">
                <thead>
