@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../firebase'; 
 import { collection, getDocs } from 'firebase/firestore';
 import '../../style.css';
 const DoctorEquipmentView = () => {
   const [equipment, setEquipment] = useState([]);
   const navigate = useNavigate();
+  const { appointmentId } = useParams();
 
   useEffect(() => {
-    // Fetch data from Firebase or use mock data
     const fetchEquipment = async () => {
       const querySnapshot = await getDocs(collection(db, "equipment"));
       const equipmentList = querySnapshot.docs.map(doc => ({ 
@@ -28,12 +28,11 @@ const DoctorEquipmentView = () => {
       { Header: 'Name', accessor: 'name' },
       { Header: 'Room Number', accessor: 'roomNumber' },
       { Header: 'Status', accessor: 'status' },
-      // If you want to format the lastChecked date, you can use a Cell renderer
     ],
     []
   );
-  const backDoctorDashboard = () => {
-    navigate("/doctorDashboard");
+  const backDoctorBookEquipment = () => {
+    navigate(`/doctorBookEquipment/${appointmentId}`);
 };
 
   const {
@@ -75,7 +74,7 @@ const DoctorEquipmentView = () => {
     </div>
         </main>
         <footer className="footer">
-                <button className="dashboardButton" onClick={backDoctorDashboard}>Doctor Dashboard</button>
+                <button className="dashboardButton" onClick={backDoctorBookEquipment}>Doctor Book Equipment</button>
             </footer>
     </div>
   );

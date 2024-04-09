@@ -22,7 +22,7 @@ const DoctorPendingAppointmentsView =()=>{
         );
         const querySnapshot = await getDocs(q);
         let fetchedDoctorPendingAppt = querySnapshot.docs.map((doc, index) => ({
-            serial: index + 1,  // To provide a serial number starting from 1
+            serial: index + 1,
             id: doc.id,
             ...doc.data()
         }));
@@ -30,14 +30,12 @@ const DoctorPendingAppointmentsView =()=>{
             fetchedDoctorPendingAppt = fetchedDoctorPendingAppt.filter(appointment => appointment.date === filterDate);
         }
         
-        // Local filtering for start time and end time
         if (startTime && endTime) {
             fetchedDoctorPendingAppt = fetchedDoctorPendingAppt.filter(appointment => {
-                const appointmentTime = appointment.time; // Assuming 'time' is stored in 'HH:MM' format
+                const appointmentTime = appointment.time;
                 return appointmentTime >= startTime && appointmentTime <= endTime;
             });
         }
-        // Fetch patient names for each appointment
         const names = {};
         for (const appointment of fetchedDoctorPendingAppt) {
             const userRef = doc(db, "users", appointment.patientId);
@@ -60,7 +58,6 @@ const DoctorPendingAppointmentsView =()=>{
     try {
         await updateDoc(appointmentRef, { status });
         alert(`Appointment has been ${status.toLowerCase()} successfully.`);
-        // Filter out the updated appointment from the appointments list
         setAppointments(prevAppointments =>
             prevAppointments.filter(appointment => appointment.id !== id)
         );
@@ -109,7 +106,7 @@ const DoctorPendingAppointmentsView =()=>{
         },{
             Header: 'Time',
             accessor: 'time',
-            Cell: ({ value }) => convertTo12HourFormat(value), // Convert time format here
+            Cell: ({ value }) => convertTo12HourFormat(value),
         },
         {
             Header: 'Doctor',
@@ -142,6 +139,11 @@ const DoctorPendingAppointmentsView =()=>{
         rows,
         prepareRow,
     } = useTable({ columns, data });
+    const resetFilters = () => {
+        setFilterDate('');
+        setStartTime('');
+        setEndTime('');
+    };  
 
     return (
         <div className="appointmentsContainer">
@@ -150,14 +152,15 @@ const DoctorPendingAppointmentsView =()=>{
             </header>
             <main className="content">
             <div className="filters">
-                <label htmlFor="dateFilter" className="filterLabel">Date:</label>
+                <label htmlFor="dateFilter" className="filterLabel">Date :</label>
                 <input id="dateFilter" type="date" value={filterDate} onChange={handleDateChange} className="dateFilterInput" />
                 
-                <label htmlFor="startTimeFilter" className="filterLabel">Start Time:</label>
+                <label htmlFor="startTimeFilter" className="filterLabel">From :</label>
                 <input id="startTimeFilter" type="time" value={startTime} onChange={handleStartTimeChange} className="timeFilterInput"/>
                 
-                <label htmlFor="endTimeFilter" className="filterLabel">End Time:</label>
+                <label htmlFor="endTimeFilter" className="filterLabel">To :</label>
                 <input id="endTimeFilter" type="time" value={endTime} onChange={handleEndTimeChange} className="timeFilterInput"/>
+                <button onClick={resetFilters} className="resetButton">Reset Filters</button>
             </div>
             <table {...getTableProps()} className="appointmentsTable">
                 <thead>

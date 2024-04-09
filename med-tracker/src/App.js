@@ -110,7 +110,7 @@ function App() {
                      <DoctorCompletedAppointments/>
                 </ProtectedRoute>
             } />
-            <Route path="doctorEquipmentView" element={
+            <Route path="doctorEquipmentView/:appointmentId" element={
                 <ProtectedRoute allowedRoles={['doctor']}>
                     <DoctorEquipmentView/>
                 </ProtectedRoute>

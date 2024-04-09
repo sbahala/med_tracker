@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from "../../firebase";
 import { collection, getDocs, addDoc ,doc, getDoc, updateDoc,deleteDoc,query,where} from "firebase/firestore";
+import {convertTo12HourFormat} from "../service/appointmentService";
 
 const DoctorBookEquipment = () => {
-  const { appointmentId } = useParams(); // Get appointmentId from the URL
+  const { appointmentId } = useParams();
   const [equipmentList, setEquipmentList] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState('');
   const navigate = useNavigate();
   const [bookedEquipments, setBookedEquipments] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
 
   useEffect(() => {
     const fetchAvailableEquipment = async () => {
@@ -35,6 +38,8 @@ const DoctorBookEquipment = () => {
           equipmentId: bookedEquip.data().equipmentId,
           equipmentName: equipmentData.name,
           status: equipmentData.status,
+          date: bookedEquip.data().date,
+          startTime: bookedEquip.data().startTime,
         });
       }
       setBookedEquipments(bookedList);
@@ -44,8 +49,11 @@ const DoctorBookEquipment = () => {
   }, [appointmentId]);
 
   const handleEquipmentBooking = async () => {
+    if(!selectedEquipment || !selectedDate || !selectedTime){
+        alert("Please select the values for booking Equipment!!");
+        return;
+    }
     try {
-      // Fetch the appointment to get the patientId
       const appointmentRef = doc(db, "appointments", appointmentId);
       const appointmentSnap = await getDoc(appointmentRef);
       if (!appointmentSnap.exists()) {
@@ -62,6 +70,8 @@ const DoctorBookEquipment = () => {
         equipmentId: selectedEquipment,
         appointmentId,
         patientId,
+        date: selectedDate,
+        startTime: selectedTime,
       });
       await updateDoc(equipmentAppointment, {
         equipmentAppointmentId: equipmentAppointment.id,
@@ -71,13 +81,18 @@ const DoctorBookEquipment = () => {
 
       setBookedEquipments(prevBookedEquipments => [...prevBookedEquipments,
         {
-            id: equipmentAppointment.id, // This is the ID of the new appointment.
+            id: equipmentAppointment.id,
             equipmentId: selectedEquipment,
             equipmentName,
             status: 'booked',
+            date: selectedDate,
+            startTime: selectedTime,
         },
         ]);
       alert("Equipment booked successfully.");
+      setSelectedEquipment('');
+      setSelectedDate('');
+      setSelectedTime('');
     } catch (error) {
       alert("Failed to book equipment.");
     }
@@ -98,7 +113,14 @@ const DoctorBookEquipment = () => {
       alert("Failed to remove equipment booking.");
     }
   };
-  
+  const handleViewEquipments=()=>{
+    navigate(`/doctorEquipmentView/${appointmentId}`);
+};
+const resetFilters = () => {
+    setSelectedEquipment('');
+    setSelectedDate('');
+    setSelectedTime('');
+};
 
   return (
     <div className="appointmentsContainer">
@@ -114,6 +136,12 @@ const DoctorBookEquipment = () => {
                             <option key={equipment.id} value={equipment.id}>{equipment.name}</option>
                         ))}
                     </select>
+                    <label htmlFor="dateSelector" className="date-label">Select Date:</label>
+                    <input type="date" id="dateSelector" className="date-selector" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                    <label htmlFor="timeSelector" className="time-label">Select Time:</label>
+                    <input type="time" id="timeSelector" className="time-selector" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} />
+                    <button onClick={resetFilters} className="resetButton">Reset Filters</button>
+                    <button onClick={handleViewEquipments} className="book-equipment-btn">View Equipment Status</button>
                     <button class="book-equipment-btn" onClick={handleEquipmentBooking}>Book Equipment</button>
                     </div>
                 <div >
@@ -123,6 +151,8 @@ const DoctorBookEquipment = () => {
                         <tr>
                             <th>Sl.no</th>
                             <th>Equipment</th>
+                            <th>Equipment Date</th>
+                            <th>Equipment Time</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -132,6 +162,8 @@ const DoctorBookEquipment = () => {
                             <tr key={equipment.id}>
                             <td>{index + 1}</td>
                             <td>{equipment.equipmentName}</td>
+                            <td>{equipment.date}</td>
+                            <td>{convertTo12HourFormat(equipment.startTime)}</td>
                             <td>{equipment.status}</td>
                             <td>
                                 <button onClick={() => handleRemoveBooking(equipment.id, equipment.equipmentId)}>Remove</button>
