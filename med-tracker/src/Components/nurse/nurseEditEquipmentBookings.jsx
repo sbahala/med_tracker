@@ -1,17 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../../firebase";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { collection, getDocs, updateDoc, doc,getDoc } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
 
+const AppointmentDetailsModal = ({ isOpen, onClose, appointmentDetails }) => {
+    if (!isOpen) return null;
+  
+    return (
+      <div className="modal">
+        <div className="modalContent">
+          <span className="close" onClick={onClose}>&times;</span>
+          <h2>Patient Information</h2>
+          <p>Name: {appointmentDetails?.patientName}</p>
+          <p>DOB: {appointmentDetails?.dob}</p>
+        </div>
+      </div>
+    );
+  };
+  
 const NurseEditEquipmentBookings = () => {
   const [equipmentNames, setEquipmentNames] = useState([]);
   const [equipment, setEquipment] = useState([]);
-  const [filter, setFilter] = useState({ name: '', status: 'available' }); // Default status is 'available'
+  const [filter, setFilter] = useState({ name: '', status: 'booked' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAppointmentDetails, setSelectedAppointmentDetails] = useState({});
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchEquipmentNames = async () => {
       const querySnapshot = await getDocs(collection(db, "equipment"));
       const names = querySnapshot.docs.map(doc => doc.data().name);
-      setEquipmentNames([...new Set(names)]); // Use a Set to ensure unique names
+      setEquipmentNames([...new Set(names)]);
     };
 
     fetchEquipmentNames();
@@ -19,41 +39,77 @@ const NurseEditEquipmentBookings = () => {
 
   useEffect(() => {
     const fetchEquipment = async () => {
-      const equipmentSnapshot = await getDocs(collection(db, "equipment"));
-      const equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const equipmentSnapshot = await getDocs(collection(db, "equipment"));
+        let equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (filter.name) {
+            equipmentData = equipmentData.filter(equipment => equipment.name === filter.name);
+        }
+        
+        if (filter.status === 'booked') {
+          const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
+          const bookedEquipmentData = appointmentsSnapshot.docs.map(doc => {
+            const equipmentDetail = equipmentData.find(equipment => equipment.id === doc.data().equipmentId);
+            return equipmentDetail ? {
+                ...equipmentDetail,
+                equipmentAppointmentId: doc.id,
+                ...doc.data(),
+            } : null;
+        }).filter(e => e != null);
       
-      if (filter.status === 'booked') {
-        const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
-        const bookedEquipmentData = appointmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        const combinedData = bookedEquipmentData.map(booking => {
-          return {
-            ...booking,
-            ...equipmentData.find(equipment => equipment.id === booking.equipmentId)
-          };
-        });
-        setEquipment(combinedData);
-      } else {
-        const filteredEquipment = equipmentData.filter(equipment => equipment.status === filter.status);
-        setEquipment(filteredEquipment);
-      }
-    };
+          setEquipment(bookedEquipmentData);
+        } else {
+          const filteredEquipment = equipmentData.filter(equipment => equipment.status === filter.status);
+          setEquipment(filteredEquipment);
+        }
+      };
 
     fetchEquipment();
-  }, [filter]); // Refetch when filters change
+  }, [filter]);
 
-  const handleStatusChange = async (equipmentId, newStatus) => {
+  const handleStatusChange = async (equipmentId, newStatus, equipmentAppointmentId) => {
+    let endTime = null;
+    if (newStatus === 'available') {
+        const now = new Date();
+        endTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    }
     const equipmentRef = doc(db, "equipment", equipmentId);
     await updateDoc(equipmentRef, { status: newStatus });
-
-    // Optimistically update UI
-    setEquipment(prev => prev.map(e => e.id === equipmentId ? { ...e, status: newStatus } : e));
+  
+    if (endTime) {
+      const equipmentAppointmentRef = doc(db, "equipmentAppointments", equipmentAppointmentId);
+      await updateDoc(equipmentAppointmentRef, { endTime });
+    }
+  
+    setEquipment(prev => prev.map(e => e.id === equipmentId ? { ...e, status: newStatus, endTime: endTime } : e));
+    let statusMessage = `Equipment Status changed to ${newStatus}.`;
+    alert(statusMessage);
   };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter({ ...filter, [name]: value });
   };
+
+  const viewDetails = async (patientId) => {
+    const patientRef = doc(db, "users", patientId);
+    const patientSnap = await getDoc(patientRef);
+    if (patientSnap.exists()) {
+      const patientData = patientSnap.data();
+      setSelectedAppointmentDetails({
+        patientName: `${patientData.firstName} ${patientData.lastName}`,
+        dob: patientData.dob,
+      });
+      setIsModalOpen(true);
+    } else {
+      console.error("No patient found");
+    }
+  };
+  const backNurseDashboard=()=>{
+    navigate("/nurseDashboard");
+    }
+    const resetFilters = () => {
+        setFilter({ name: '', status: 'booked' });
+    };
 
   return (
     <div className="appointmentsContainer"> 
@@ -62,21 +118,19 @@ const NurseEditEquipmentBookings = () => {
             </header>
      <main className="content">
      <div className="filters">
-        <label>Filter by Name:</label>
-        <select name="name" value={filter.name} onChange={handleFilterChange}>
+        <label htmlFor="nameFilter" className="filterLabel">Filter by Name:</label>
+        <select id="nameFilter"name="name" className="nameFilterInput" value={filter.name} onChange={handleFilterChange}>
           <option value="">All</option>
           {equipmentNames.map((name, index) => (
             <option key={index} value={name}>{name}</option>
           ))}
         </select>
 
-        <label>Filter by Status:</label>
-        <select name="status" value={filter.status} onChange={handleFilterChange}>
-          <option value="available">Available</option>
+        <label htmlFor="statusFilter" className="filterLabel">Filter by Status:</label>
+        <select id="statusFilter" name="status"className="statusFilterInput"  value={filter.status} onChange={handleFilterChange}>
           <option value="booked">Booked</option>
-          <option value="inuse">In Use</option>
-          <option value="maintenance">Maintenance</option>
         </select>
+        <button onClick={resetFilters} className="resetButton">Reset Filters</button>
       </div>
 
       <table className="appointmentsTable">
@@ -85,7 +139,7 @@ const NurseEditEquipmentBookings = () => {
             <th>Sl.no</th>
             <th>Equipment Name</th>
             <th>Status</th>
-            {filter.status === 'booked' && <th>Appointment Details</th>}
+            {filter.status === 'booked' && <th>Patient Details</th>}
             <th>Actions</th>
           </tr>
         </thead>
@@ -96,11 +150,10 @@ const NurseEditEquipmentBookings = () => {
               <td>{item.name}</td>
               <td>{item.status}</td>
               {filter.status === 'booked' && <td>
-                {/* Button to view appointment details */}
-                <button>View Details</button>
+                <button onClick={() => viewDetails(item.patientId)}>View Details</button>
               </td>}
               <td>
-                <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}>
+              <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value, item.equipmentAppointmentId)}>
                   <option value="available">Available</option>
                   <option value="inuse">In Use</option>
                   <option value="maintenance">Maintenance</option>
@@ -112,6 +165,14 @@ const NurseEditEquipmentBookings = () => {
         </tbody>
       </table>
      </main>
+     <AppointmentDetailsModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            appointmentDetails={selectedAppointmentDetails}
+        />
+        <footer className="footer">
+                    <button className="dashboardButton" onClick={backNurseDashboard}>Nurse Dashboard</button>
+        </footer>    
     </div>
   );
 };
