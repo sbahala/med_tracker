@@ -4,18 +4,10 @@ import {collection, doc, getDocs, updateDoc} from "firebase/firestore";
 import EquipmentCreate from "../service/equipmentCreate";
 import {
     Button,
-    Typography,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     TextField,
     MenuItem, Select, InputLabel, FormControl
 } from '@mui/material';
@@ -80,39 +72,34 @@ const ViewAllEquipments = () => {
             </header>
             <main className="content">
                 <EquipmentCreate onEquipmentCreated={fetchEquipments} />
-                <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align="right">Room Number</TableCell>
-                                <TableCell align="right">Status</TableCell>
-                                <TableCell align="right">ID</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {equipments.length > 0 ? equipments.map((equipment) => (
-                                <TableRow key={equipment.id}>
-                                    <TableCell component="th" scope="row">
-                                        {equipment.name}
-                                    </TableCell>
-                                    <TableCell align="right">{equipment.roomNumber}</TableCell>
-                                    <TableCell align="right">{equipment.status}</TableCell>
-                                    <TableCell align="right">{equipment.id}</TableCell>
-                                    <TableCell>
-                                        <Button variant="contained" color="primary" onClick={() => handleOpenDialog(equipment)}>Edit</Button>
-                                    </TableCell>
-                                </TableRow>
-                            )) : (
-                                <TableRow>
-                                    <TableCell colSpan={4}>
-                                        <Typography textAlign="center">No equipment found.</Typography>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <table className="appointmentsTable">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Room Number</th>
+                        <th>Status</th>
+                        <th>ID</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {equipments.length > 0 ? equipments.map((equipment) => (
+                        <tr key={equipment.id}>
+                            <td>{equipment.name}</td>
+                            <td>{equipment.roomNumber}</td>
+                            <td>{equipment.status}</td>
+                            <td>{equipment.id}</td>
+                            <td>
+                                <button onClick={() => handleOpenDialog(equipment)}>Edit</button>
+                            </td>
+                        </tr>
+                    )) : (
+                        <tr>
+                            <td colSpan="5">No equipment found.</td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
             </main>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Edit Equipment</DialogTitle>

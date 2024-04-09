@@ -45,6 +45,7 @@ function App() {
                     <AdminDashboard />
                 </ProtectedRoute>
             } />
+
             <Route path="patientDashboard" element={
                 <ProtectedRoute allowedRoles={['patient']}>
                     <PatientDashboard />
