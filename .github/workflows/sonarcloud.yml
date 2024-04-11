@@ -44,6 +44,7 @@ jobs:
 
     steps:
       - name: Set up JDK 17
+        id: setup_java
         uses: actions/setup-java@v2
         with:
           java-version: '17' # Specify JDK version
@@ -65,6 +66,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
           SONAR_TOKEN: 50b6a990e7d3690b138f59b18c1849205b77e105  # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+          JAVA_HOME: ${{ steps.setup_java.outputs.java_home }}
+          # Ensure the correct java executable is used
+          PATH: ${{ steps.setup_java.outputs.java_home }}/bin:$PATH
         run: |
           sonar-scanner \
             -Dsonar.projectKey=yuzhi-wang_med_tracker \
