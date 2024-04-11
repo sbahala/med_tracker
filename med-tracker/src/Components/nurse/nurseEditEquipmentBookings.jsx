@@ -38,31 +38,47 @@ const NurseEditEquipmentBookings = () => {
   }, []);
 
   useEffect(() => {
+    const fetchEquipmentDetails = async (equipmentData, doc) => {
+      const equipmentDetail = equipmentData.find(
+        equipment => equipment.id === doc.data().equipmentId
+      );
+      return equipmentDetail
+        ? {
+            ...equipmentDetail,
+            equipmentAppointmentId: doc.id,
+            ...doc.data(),
+          }
+        : null;
+    };
+  
+    const fetchBookedEquipmentData = async (equipmentData) => {
+      const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
+      return Promise.all(appointmentsSnapshot.docs.map(doc =>
+        fetchEquipmentDetails(equipmentData, doc)
+      ));
+    };
+  
+    const filterEquipmentData = (equipmentData, filter) => {
+      if (filter.name) {
+        return equipmentData.filter(equipment => equipment.name === filter.name);
+      }
+      return equipmentData.filter(equipment => equipment.status === filter.status);
+    };
+  
     const fetchEquipment = async () => {
-        const equipmentSnapshot = await getDocs(collection(db, "equipment"));
-        let equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if (filter.name) {
-            equipmentData = equipmentData.filter(equipment => equipment.name === filter.name);
-        }
-        
-        if (filter.status === 'booked') {
-          const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
-          const bookedEquipmentData = appointmentsSnapshot.docs.map(doc => {
-            const equipmentDetail = equipmentData.find(equipment => equipment.id === doc.data().equipmentId);
-            return equipmentDetail ? {
-                ...equipmentDetail,
-                equipmentAppointmentId: doc.id,
-                ...doc.data(),
-            } : null;
-        }).filter(e => e != null);
-      
-          setEquipment(bookedEquipmentData);
-        } else {
-          const filteredEquipment = equipmentData.filter(equipment => equipment.status === filter.status);
-          setEquipment(filteredEquipment);
-        }
-      };
-
+      const equipmentSnapshot = await getDocs(collection(db, "equipment"));
+      let equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      equipmentData = filterEquipmentData(equipmentData, filter);
+  
+      if (filter.status === 'booked') {
+        const bookedEquipmentData = await fetchBookedEquipmentData(equipmentData);
+        setEquipment(bookedEquipmentData.filter(e => e != null));
+      } else {
+        setEquipment(equipmentData);
+      }
+    };
+  
     fetchEquipment();
   }, [filter]);
 
