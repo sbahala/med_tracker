@@ -8,7 +8,6 @@ import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogT
 
 const AppointmentRecords = () => {
     const { currentUser } = useContext(AuthContext);
-    //const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const [patientInfo, setPatientInfo] = useState({
         firstName: '',

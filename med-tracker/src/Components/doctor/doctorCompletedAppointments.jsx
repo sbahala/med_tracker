@@ -13,7 +13,7 @@ function PatientDetailsModal({ isOpen, onClose, appointmentDetails }) {
         isOpen && (
             <div className="modal">
                 <div className="modalContent">
-                    <span className="close" onClick={onClose}>&times;</span>
+                    <button className="close" onClick={onClose}>&times;</button>
                     <h2>Patient Details</h2>
                     <div className="appointmentDetails">
                         <p>Doctor Attended: {appointmentDetails.doctorName}</p>

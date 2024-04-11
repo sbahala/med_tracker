@@ -16,7 +16,7 @@ function PatientVitalsModal({ isOpen, onClose, patientVitals,patientAge }) {
     isOpen && (
       <div className="modal">
         <div className="modalContent">
-          <span className="close" onClick={onClose}>&times;</span>
+          <button className="close" onClick={onClose}>&times;</button>
           <h2>View Patient Vitals</h2>
           <div className="vitalsInfo">
             <p>Height: {patientVitals.height}</p>
@@ -93,9 +93,9 @@ function VitalsModal({ isOpen, onClose, onSave, appointmentId,currentVitals }) {
         isOpen && (
           <div className="modal">
             <div className="modalContent">
-              <span className="close" onClick={onClose}>&times;</span>
+              <button className="close" onClick={onClose}>&times;</button>
               <h2>Enter Patient Diagnosis & Treatment Plan</h2>
-              <div className="formRow"><div className="formGroup"><label for="diagnosis">Diagnosis</label><textarea className={`textareaField ${validationErrors.diagnosis ? 'inputError' : ''}`} name="diagnosis" placeholder="Diagnosis" value={vitals.diagnosis} onChange={handleChange}></textarea>
+              <div className="formRow"><div className="formGroup"><label htmlFor="diagnosis">Diagnosis</label><textarea className={`textareaField ${validationErrors.diagnosis ? 'inputError' : ''}`} name="diagnosis" placeholder="Diagnosis" value={vitals.diagnosis} onChange={handleChange}></textarea>
                   {validationErrors.diagnosis && <div className="error">{validationErrors.diagnosis}</div>}</div></div>
               <div className="formRow"><div className="formGroup"><label htmlFor="treatmentPlan">Treatment Plan</label>
                   <textarea className={`textareaField ${validationErrors.treatmentPlan ? 'inputError' : ''}`} name="treatmentPlan" placeholder="Enter Treatment Plan" value={vitals.treatmentPlan} onChange={handleChange}></textarea>

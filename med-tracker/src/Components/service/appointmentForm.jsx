@@ -5,7 +5,6 @@ const AppointmentForm = ({ onSaveAppointment }) => {
     const [time, setTime] = useState('');
     const [departmentName, setDepartmentName] = useState('');
     const [doctorName, setDoctorName] = useState('');
-    // const [status, setStatus] = useState('Pending');
 
 
     const handleSubmit = (e) => {
@@ -16,9 +15,7 @@ const AppointmentForm = ({ onSaveAppointment }) => {
             departmentName,
             doctorName,
             status: 'Pending'
-            // patientInfo: {...} // 可以在这里添加病人信息，假设从其他地方获取
         });
-        // 重置表单字段
         setDate('');
         setTime('');
         setDepartmentName('');

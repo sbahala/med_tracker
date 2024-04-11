@@ -27,9 +27,6 @@ import ViewAllEquipments from "./Components/admin/viewAllEquipments";
 import DoctorBookEquipment from "./Components/doctor/doctorBookEquipment";
 import NurseEditEquipmentBookings from "./Components/nurse/nurseEditEquipmentBookings";
 
-//import {useContext} from "react";
-//import {AuthContext} from "./context/authContext";
-
 function App() {
 
   return (
