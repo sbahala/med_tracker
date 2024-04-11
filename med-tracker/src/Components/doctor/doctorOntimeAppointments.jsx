@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, updateDoc, doc ,getDoc} from "fireba
 import {convertTo12HourFormat} from "../service/appointmentService";
 import '../../style.css';
 import { differenceInYears } from 'date-fns';
+import PropTypes from 'prop-types';
 
 function Modal({ isOpen, onClose, title, children }) {
     if (!isOpen) return null;
@@ -20,6 +21,12 @@ function Modal({ isOpen, onClose, title, children }) {
       </div>
     );
   }
+  Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    children: PropTypes.node
+  };
   
   function PatientVitalsModal({ isOpen, onClose, patientVitals, patientAge }) {
     return (
