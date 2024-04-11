@@ -57,12 +57,8 @@ jobs:
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
           unzip sonar-scanner-cli-4.6.2.2472-linux.zip
           echo "$(pwd)/sonar-scanner-4.6.2.2472-linux/bin" >> $GITHUB_PATH
-
-      - name: Verify SonarScanner Installation
-        run: |
-         which sonar-scanner
-         sonar-scanner -v
-         
+          echo "SONAR_SCANNER_HOME=$(pwd)/sonar-scanner-4.6.2.2472-linux" >> $GITHUB_ENV
+          
       - name: Run SonarScanner
 
         # You can pin the exact commit or the version.
@@ -72,10 +68,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
           SONAR_TOKEN: 50b6a990e7d3690b138f59b18c1849205b77e105  # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
           JAVA_HOME: ${{ steps.setup_java.outputs.java_home }}
-          # Ensure the correct java executable is used
-          PATH: ${{ steps.setup_java.outputs.java_home }}/bin:$PATH
         run: |
-          sonar-scanner \
+          export PATH=$JAVA_HOME/bin:$PATH
+          $SONAR_SCANNER_HOME/bin/sonar-scanner \
             -Dsonar.projectKey=yuzhi-wang_med_tracker \
             -Dsonar.organization=yuzhi-wang \
             -Dsonar.sources=. \
