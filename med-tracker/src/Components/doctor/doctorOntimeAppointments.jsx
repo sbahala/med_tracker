@@ -6,31 +6,41 @@ import { collection, query, where, getDocs, updateDoc, doc ,getDoc} from "fireba
 import {convertTo12HourFormat} from "../service/appointmentService";
 import '../../style.css';
 import { differenceInYears } from 'date-fns';
+import PropTypes from 'prop-types';
 
-
-
-function PatientVitalsModal({ isOpen, onClose, patientVitals,patientAge }) {
+function Modal({ isOpen, onClose, title, children }) {
     if (!isOpen) return null;
-
-  return (
-    isOpen && (
+  
+    return (
       <div className="modal">
         <div className="modalContent">
           <button className="close" onClick={onClose}>&times;</button>
-          <h2>View Patient Vitals</h2>
-          <div className="vitalsInfo">
+          <h2>{title}</h2>
+          {children}
+        </div>
+      </div>
+    );
+  }
+  Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    children: PropTypes.node
+  };
+  
+  function PatientVitalsModal({ isOpen, onClose, patientVitals, patientAge }) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} title="View Patient Vitals">
+        <div className="vitalsInfo">
             <p>Height: {patientVitals.height}</p>
             <p>Weight: {patientVitals.weight}</p>
             <p>Age: {patientAge} years</p>
             <p>Blood Pressure: {patientVitals.bloodPressure}</p>
             <p>Allergies: {patientVitals.allergies}</p>
             <p>Family Medical History: {patientVitals.familyMedicalHistory}</p>
-          </div>
         </div>
-      </div>
-    )
-  );
-      
+      </Modal>
+    );
   }
 
 
@@ -88,22 +98,16 @@ function VitalsModal({ isOpen, onClose, onSave, appointmentId,currentVitals }) {
     };
   
     if (!isOpen) return null;
-  
+
     return (
-        isOpen && (
-          <div className="modal">
-            <div className="modalContent">
-              <button className="close" onClick={onClose}>&times;</button>
-              <h2>Enter Patient Diagnosis & Treatment Plan</h2>
-              <div className="formRow"><div className="formGroup"><label htmlFor="diagnosis">Diagnosis</label><textarea className={`textareaField ${validationErrors.diagnosis ? 'inputError' : ''}`} name="diagnosis" placeholder="Diagnosis" value={vitals.diagnosis} onChange={handleChange}></textarea>
-                  {validationErrors.diagnosis && <div className="error">{validationErrors.diagnosis}</div>}</div></div>
-              <div className="formRow"><div className="formGroup"><label htmlFor="treatmentPlan">Treatment Plan</label>
-                  <textarea className={`textareaField ${validationErrors.treatmentPlan ? 'inputError' : ''}`} name="treatmentPlan" placeholder="Enter Treatment Plan" value={vitals.treatmentPlan} onChange={handleChange}></textarea>
-                  {validationErrors.treatmentPlan && <div className="error">{validationErrors.treatmentPlan}</div>}</div></div>
-              <button onClick={handleSubmit}>Submit Diagnosis</button>
-            </div>
-          </div>
-        )
+        <Modal isOpen={isOpen} onClose={onClose} title="Enter Patient Diagnosis & Treatment Plan">
+          <div className="formRow"><div className="formGroup"><label htmlFor="diagnosis">Diagnosis</label><textarea className={`textareaField ${validationErrors.diagnosis ? 'inputError' : ''}`} name="diagnosis" placeholder="Diagnosis" value={vitals.diagnosis} onChange={handleChange}></textarea>
+               {validationErrors.diagnosis && <div className="error">{validationErrors.diagnosis}</div>}</div></div>
+          <div className="formRow"><div className="formGroup"><label htmlFor="treatmentPlan">Treatment Plan</label>
+            <textarea className={`textareaField ${validationErrors.treatmentPlan ? 'inputError' : ''}`} name="treatmentPlan" placeholder="Enter Treatment Plan" value={vitals.treatmentPlan} onChange={handleChange}></textarea>
+                {validationErrors.treatmentPlan && <div className="error">{validationErrors.treatmentPlan}</div>}</div></div>
+          <button onClick={handleSubmit}>Submit Diagnosis</button>
+        </Modal>
       );
       
   }

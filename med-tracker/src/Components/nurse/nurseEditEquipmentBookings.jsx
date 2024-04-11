@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useCallback} from 'react';
 import { db } from "../../firebase";
 import { collection, getDocs, updateDoc, doc,getDoc } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
@@ -36,51 +36,35 @@ const NurseEditEquipmentBookings = () => {
 
     fetchEquipmentNames();
   }, []);
+  const fetchEquipment = useCallback(async () => {
+    const equipmentSnapshot = await getDocs(collection(db, "equipment"));
+    let equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    equipmentData = equipmentData.filter(equipment => {
+      return (!filter.name || equipment.name === filter.name) &&
+             (equipment.status === filter.status);
+    });
+
+    if (filter.status === 'booked' || filter.status === 'inuse') {
+      const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
+      const bookedEquipmentData = await Promise.all(appointmentsSnapshot.docs.map(doc => {
+        const equipmentDetail = equipmentData.find(equipment => equipment.id === doc.data().equipmentId);
+        return equipmentDetail ? {
+          ...equipmentDetail,
+          equipmentAppointmentId: doc.id,
+          ...doc.data(),
+        } : null;
+      }));
+
+      setEquipment(bookedEquipmentData.filter(e => e != null));
+    } else {
+      setEquipment(equipmentData);
+    }
+  }, [filter]);
 
   useEffect(() => {
-    const fetchEquipmentDetails = async (equipmentData, doc) => {
-      const equipmentDetail = equipmentData.find(
-        equipment => equipment.id === doc.data().equipmentId
-      );
-      return equipmentDetail
-        ? {
-            ...equipmentDetail,
-            equipmentAppointmentId: doc.id,
-            ...doc.data(),
-          }
-        : null;
-    };
-  
-    const fetchBookedEquipmentData = async (equipmentData) => {
-      const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
-      return Promise.all(appointmentsSnapshot.docs.map(doc =>
-        fetchEquipmentDetails(equipmentData, doc)
-      ));
-    };
-  
-    const filterEquipmentData = (equipmentData, filter) => {
-      if (filter.name) {
-        return equipmentData.filter(equipment => equipment.name === filter.name);
-      }
-      return equipmentData.filter(equipment => equipment.status === filter.status);
-    };
-  
-    const fetchEquipment = async () => {
-      const equipmentSnapshot = await getDocs(collection(db, "equipment"));
-      let equipmentData = equipmentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  
-      equipmentData = filterEquipmentData(equipmentData, filter);
-  
-      if (filter.status === 'booked') {
-        const bookedEquipmentData = await fetchBookedEquipmentData(equipmentData);
-        setEquipment(bookedEquipmentData.filter(e => e != null));
-      } else {
-        setEquipment(equipmentData);
-      }
-    };
-  
     fetchEquipment();
-  }, [filter]);
+  }, [fetchEquipment]);
 
   const handleStatusChange = async (equipmentId, newStatus, equipmentAppointmentId) => {
     let endTime = null;
@@ -99,6 +83,9 @@ const NurseEditEquipmentBookings = () => {
     setEquipment(prev => prev.map(e => e.id === equipmentId ? { ...e, status: newStatus, endTime: endTime } : e));
     let statusMessage = `Equipment Status changed to ${newStatus}.`;
     alert(statusMessage);
+    if (filter.status === newStatus || filter.status === 'booked' || filter.status === 'inuse') {
+        fetchEquipment();
+      }
   };
 
   const handleFilterChange = (e) => {
@@ -145,6 +132,7 @@ const NurseEditEquipmentBookings = () => {
         <label htmlFor="statusFilter" className="filterLabel">Filter by Status:</label>
         <select id="statusFilter" name="status"className="statusFilterInput"  value={filter.status} onChange={handleFilterChange}>
           <option value="booked">Booked</option>
+          <option value="inuse">In Use</option>
         </select>
         <button onClick={resetFilters} className="resetButton">Reset Filters</button>
       </div>
@@ -155,7 +143,7 @@ const NurseEditEquipmentBookings = () => {
             <th>Sl.no</th>
             <th>Equipment Name</th>
             <th>Status</th>
-            {filter.status === 'booked' && <th>Patient Details</th>}
+            {(filter.status === 'booked' || filter.status === 'inuse') && <th>Patient Details</th>}
             <th>Actions</th>
           </tr>
         </thead>
@@ -165,7 +153,7 @@ const NurseEditEquipmentBookings = () => {
               <td>{index + 1}</td>
               <td>{item.name}</td>
               <td>{item.status}</td>
-              {filter.status === 'booked' && <td>
+              {(item.status === 'booked' || item.status === 'inuse') && <td>
                 <button onClick={() => viewDetails(item.patientId)}>View Details</button>
               </td>}
               <td>
