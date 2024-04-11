@@ -217,13 +217,6 @@ span {
     padding: 20px;
     box-sizing: border-box;
 }
-
-.fixed-header {
-    background: #f7f7f7;
-    padding: 10px 0;
-    text-align: center;
-}
-
 .content {
     margin-top: 20px;
 }

@@ -129,7 +129,7 @@ const resetFilters = () => {
             </header>
             <main className="content">
                 <div className="filters">
-                    <label for="equipmentSelector" class="equipment-label">Select Equipment:</label>
+                    <label htmlFor="equipmentSelector" class="equipment-label">Select Equipment:</label>
                     <select id="equipmentSelector" class="equipment-selector" value={selectedEquipment} onChange={(e) => setSelectedEquipment(e.target.value)}>
                         <option value="">--Please choose an equipment--</option>
                         {equipmentList.map(equipment => (

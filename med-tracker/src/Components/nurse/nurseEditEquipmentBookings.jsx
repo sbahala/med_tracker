@@ -9,7 +9,7 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointmentDetails }) => {
     return (
       <div className="modal">
         <div className="modalContent">
-          <span className="close" onClick={onClose}>&times;</span>
+          <button className="close" onClick={onClose}>&times;</button>
           <h2>Patient Information</h2>
           <p>Name: {appointmentDetails?.patientName}</p>
           <p>DOB: {appointmentDetails?.dob}</p>

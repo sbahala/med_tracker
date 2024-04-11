@@ -9,7 +9,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const AppointmentRecords = () => {
     const { currentUser } = useContext(AuthContext);
-    //const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const [patientInfo, setPatientInfo] = useState({
         firstName: '',
