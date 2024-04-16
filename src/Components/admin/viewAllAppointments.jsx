@@ -82,7 +82,7 @@ const ViewAllAppointments = () => {
                                         <Typography>Time: {appointment.time}</Typography>
                                         <Typography>Department: {appointment.departmentName}</Typography>
                                         <Typography>Doctor: {appointment.doctorName}</Typography>
-                                        <Typography>Status: {appointment.status}</Typography>
+                                        {/*<Typography>Status: {appointment.status}</Typography>*/}
                                     </AccordionDetails>
                                 </Accordion>
                             ))}
