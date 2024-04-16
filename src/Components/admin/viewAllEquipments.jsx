@@ -66,7 +66,7 @@ const ViewAllEquipments = () => {
     };
 
     return (
-        <div className="equipmentContainer">
+        <div className="appointmentsContainer">
             <header className="fixed-header">
                 <h1>Equipments</h1>
             </header>

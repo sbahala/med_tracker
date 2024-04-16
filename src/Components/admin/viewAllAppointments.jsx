@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from "../../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Typography } from '@mui/material';
 import '../../style.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,59 +37,43 @@ const ViewAllAppointments = () => {
         fetchAppointments();
     }, []);
 
-    const groupAppointmentsByStatus = (appointments) => {
-        return appointments.reduce((acc, appointment) => {
-            const { status } = appointment;
-            if (!acc[status]) {
-                acc[status] = [];
-            }
-            acc[status].push(appointment);
-            return acc;
-        }, {});
-    };
 
-    const groupedAppointments = groupAppointmentsByStatus(appointments);
 
     const backAdminDashboard=()=>{
         navigate("/adminDashboard");
     }
-    const isFutureAppointment = (appointmentDate) => {
-        const today = new Date();
-        const appointment = new Date(appointmentDate);
-        return appointment > today;
-    };
 
     return (
-        <div className="setAccountDetailsContainer">
+        <div className="appointmentsContainer">
             <header className="fixed-header">
                 <h1>All Appointments</h1>
             </header>
             <main className="content">
-                {Object.keys(groupedAppointments).length > 0 ? (
-                    Object.entries(groupedAppointments).map(([status, appointmentsGroup]) => (
-                        <div key={status}>
-                            <Typography variant="h6" style={{ marginTop: '20px', textTransform: 'capitalize' }}>
-                                <span className={`statusBadge ${status.toLowerCase()}`}>{status === 'Finished' ? 'Diagnosis Complete' : status}</span>
-                            </Typography>
-                            {appointmentsGroup.map((appointment) => (
-                                <Accordion key={appointment.id} className={isFutureAppointment(appointment.date) ? "futureAppointment" : "pastAppointment"}>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography>{appointment.date} - {appointment.patientName}</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Typography>Date: {appointment.date}</Typography>
-                                        <Typography>Time: {appointment.time}</Typography>
-                                        <Typography>Department: {appointment.departmentName}</Typography>
-                                        <Typography>Doctor: {appointment.doctorName}</Typography>
-                                        {/*<Typography>Status: {appointment.status}</Typography>*/}
-                                    </AccordionDetails>
-                                </Accordion>
-                            ))}
-                        </div>
-                    ))
-                ) : (
-                    <Typography>No appointments found.</Typography>
-                )}
+                <table className="appointmentsTable">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Department</th>
+                        <th>Doctor</th>
+                        <th>Status</th>
+                        <th>Patient Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {appointments.map((appointment) => (
+                        <tr key={appointment.id}>
+                            <td>{appointment.date}</td>
+                            <td>{appointment.time}</td>
+                            <td>{appointment.departmentName}</td>
+                            <td>{appointment.doctorName}</td>
+                            <td>{appointment.status}</td>
+                            <td>{appointment.patientName}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+                {appointments.length === 0 && <Typography>No appointments found.</Typography>}
             </main>
             <footer className = "footer">
             <button className="dashboardButton" onClick={backAdminDashboard}>Admin Dashboard</button>
