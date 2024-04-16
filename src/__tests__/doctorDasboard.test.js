@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
 import DoctorDashboard from '../Components/doctor/doctorDashboard';
-import { signOut ,getAuth} from 'firebase/auth';
+import { signOut} from 'firebase/auth';
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
