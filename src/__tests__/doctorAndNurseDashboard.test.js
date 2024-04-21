@@ -105,16 +105,6 @@ describe('Dashboard Tests', () => {
     });
   });
   describe('AdminDashboard Tests', () => {
-    beforeEach(() => {
-      mockNavigate.mockReset();
-      jest.clearAllMocks();
-    });
-  
-    const renderWithProviders = (ui) => {
-      return render(
-        <BrowserRouter>{ui}</BrowserRouter>
-      );
-    };
   
     it('renders correctly', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
