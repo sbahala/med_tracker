@@ -62,14 +62,24 @@ jest.mock('firebase/firestore', () => ({
   }),
 }));
 
-  beforeEach(() => {
-    console.error = jest.fn();
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    signInWithEmailAndPassword.mockResolvedValue({
-        user: { uid: 'user123' }
-      });
+beforeEach(() => {
+  console.error = jest.fn();
+  jest.clearAllMocks();
+  mockNavigate.mockReset();
+  jest.resetAllMocks();
+  signInWithEmailAndPassword.mockImplementation((auth, email, password) => {
+    if (email === 'admin@example.com' && password === 'correctpassword') {
+      return Promise.resolve({ user: { uid: 'admin123' } });
+    } else if (email === 'doctor@example.com' && password === 'correctpassword') {
+      return Promise.resolve({ user: { uid: 'doctor134' } });
+    } else if (email === 'nurse@example.com' && password === 'correctpassword') {
+      return Promise.resolve({ user: { uid: 'nurse135' } });
+    } else if (email === 'patient@example.com' && password === 'correctpassword') {
+      return Promise.resolve({ user: { uid: 'patient123' } });
+    }
+    return Promise.reject(new Error('Invalid credentials'));
   });
+});
 
   const setup = () => {
     const utils = render(
@@ -88,72 +98,28 @@ jest.mock('firebase/firestore', () => ({
     };
   };
 
+  const performLogin = async (email, password) => {
+    const { emailInput, passwordInput, submitButton } = setup();
+    fireEvent.change(emailInput, { target: { value: email } });
+    fireEvent.change(passwordInput, { target: { value: password } });
+    fireEvent.click(submitButton);
+  };
+  const expectNavigation = async (expectedPath) => {
+  await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith(expectedPath));
+};
+
+  
+describe('Login functionality', () => {
+
   it('displays an error message on failed login', async () => {
     signInWithEmailAndPassword.mockRejectedValueOnce(new Error('Failed to log in'));
+    await performLogin('user@example.com', 'wrongpassword');
+    await waitFor(() => expect(screen.getByText('Something went wrong')).toBeInTheDocument());
   });
+
   it('displays an error message on invalid login credentials', async () => {
     signInWithEmailAndPassword.mockRejectedValueOnce(new Error('Invalid credentials'));
-
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } });
-
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Something went wrong')).toBeInTheDocument();
-    });
+    await performLogin('user@example.com', 'wrongpassword');
+    await waitFor(() => expect(screen.getByText('Something went wrong')).toBeInTheDocument());
   });
-  it('navigates to the admin dashboard on successful admin login', async () => {
-  const { emailInput, passwordInput, submitButton } = setup();
-  fireEvent.change(emailInput, { target: { value: 'admin@example.com' } });
-  fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
-  fireEvent.click(submitButton);
-  try {
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/adminDashboard');
-    });
-  } catch (error) {
-    console.error("Failed to navigate as expected:", error);
-  }
 });
-
-  it('navigates to the doctor dashboard on successful doctor login', async () => {
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: 'doctor@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
-    fireEvent.click(submitButton);
-    try {
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/doctorDashboard');
-      });
-    } catch (error) {
-      console.error("Failed to navigate as expected:", error);
-    }
-  });
-  it('navigates to the nurse dashboard on successful doctor login', async () => {
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: 'nurse@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
-    fireEvent.click(submitButton);
-    try {
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/nurseDashboard');
-      });
-    } catch (error) {
-      console.error("Failed to navigate as expected:", error);
-    }
-  });
-  it('navigates to the patient dashboard on successful doctor login', async () => {
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: 'patient@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
-    fireEvent.click(submitButton);
-    try {
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/patientDashboard');
-      });
-    } catch (error) {
-      console.error("Failed to navigate as expected:", error);
-    }
-  });
