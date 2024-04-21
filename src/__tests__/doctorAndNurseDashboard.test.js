@@ -22,7 +22,9 @@ jest.mock('firebase/auth', () => ({
 const renderWithProviders = (ui, userType) => {
   const users = {
     doctor: { uid: 'doctor123' },
-    nurse: { uid: 'nurse123' }
+    nurse: { uid: 'nurse123' },
+    admin: { uid: 'admin123' },
+
   };
 
   return render(
