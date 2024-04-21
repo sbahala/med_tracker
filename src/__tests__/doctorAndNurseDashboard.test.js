@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
 import DoctorDashboard from '../Components/doctor/doctorDashboard';
 import NurseDashboard from '../Components/nurse/nurseDashboard';
+import AdminDashboard from '../Components/admin/adminDashboard';
 import { signOut } from 'firebase/auth';
 
 const mockNavigate = jest.fn();
@@ -21,7 +22,9 @@ jest.mock('firebase/auth', () => ({
 const renderWithProviders = (ui, userType) => {
   const users = {
     doctor: { uid: 'doctor123' },
-    nurse: { uid: 'nurse123' }
+    nurse: { uid: 'nurse123' },
+    admin: { uid: 'admin123' },
+
   };
 
   return render(
@@ -103,4 +106,43 @@ describe('Dashboard Tests', () => {
       });
     });
   });
+  describe('AdminDashboard Tests', () => {
+    const renderAdminDashboard = () => renderWithProviders(<AdminDashboard />);
+  
+    const testNavigation = (buttonText, expectedRoute) => {
+      it(`navigates to ${expectedRoute} on button click`, () => {
+        const { getByText } = renderAdminDashboard();
+        fireEvent.click(getByText(buttonText));
+        expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
+      });
+    };
+  
+    const testSignOutProcess = (buttonText, expectedRoute) => {
+      it('calls sign out process on "Sign Out" button click for Admin', async () => {
+        const { getByText } = renderAdminDashboard();
+        fireEvent.click(getByText(buttonText));
+        await waitFor(() => {
+          expect(signOut).toHaveBeenCalled();
+          expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
+        });
+      });
+    };
+  
+    beforeEach(() => {
+      mockNavigate.mockReset();
+      jest.clearAllMocks();
+    });
+  
+    it('renders correctly to Admin', () => {
+      const { getByText } = renderAdminDashboard();
+      expect(getByText('Welcome to Admin Dashboard')).toBeInTheDocument();
+    });
+
+    testNavigation('Create Appointments', '/appointmentCreate');
+    testNavigation('View Appointments', '/appointmentView');
+    testNavigation('Edit User Accounts', '/editExistingAccounts');
+    testNavigation('Edit Equipments', '/viewEquipments');
+    testSignOutProcess('Sign Out', '/');
+  });
+  
 });

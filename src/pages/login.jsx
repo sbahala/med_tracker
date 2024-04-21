@@ -6,14 +6,14 @@ import { auth , db} from '../firebase';
 import '../style.css';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setErr] = useState(false);
     const navigate = useNavigate();
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -52,11 +52,11 @@ const Login = () => {
                 <span className="logo">Med Tracker</span>
                 <span className="title">Login</span>
                 <form onSubmit={handleSubmit}>
-                    <input required type="email" name="email" placeholder="email" />
-                    <input required type="password" name="password" placeholder="password" />
+                    <input required type="email" name="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}/>
+                    <input required type="password" name="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
 
 
-                    <button>Login</button>
+                    <button type="submit">Login</button>
                     {error && <span>Something went wrong</span>}
                 </form>
                 <p>

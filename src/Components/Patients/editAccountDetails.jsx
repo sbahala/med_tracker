@@ -25,11 +25,11 @@ const EditAccountDetails =()=>{
             const fetchUserData = async () => {
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const userSnapshot = await getDoc(userDocRef);
-                if (userSnapshot.exists()) {
+                if (userSnapshot && userSnapshot.exists()) {
                     const userData = userSnapshot.data();
                     setPatientInfo(prev => ({
                         ...prev,
-                        ...userData // This spreads the fetched data into the state, updating it
+                        ...userData
                     }));
                 }  else {
                     console.log("No such document!");
@@ -80,7 +80,7 @@ const EditAccountDetails =()=>{
         }
         const selectedDate = new Date(trimmedPatientInfo.dob);
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); // Normalize current date to midnight for accurate comparison
+        currentDate.setHours(0, 0, 0, 0);
         if (selectedDate > currentDate) {
             newErrors.dob = "Date of birth cannot be in the future.";
         }
@@ -90,7 +90,7 @@ const EditAccountDetails =()=>{
         }
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            return; // Stop the form submission
+            return;
         }
         const userDocRef = doc(db, "users", currentUser.uid);
         try{
@@ -108,7 +108,6 @@ const EditAccountDetails =()=>{
     }
 
     return (
-        /*<div className="formContainer">disabled={!isEditable}*/
         <div className="setAccountDetailsContainer">
         <header className="fixed-header"><h1>Welcome to Edit Account - {patientInfo.firstName} {patientInfo.lastName}</h1></header>
         <main className="content">
@@ -151,7 +150,6 @@ const EditAccountDetails =()=>{
         </footer>
            
         </div>
-        /*<button className="editButton" onClick={toggleEdit}>Edit Details</button> */
         
     );
 
