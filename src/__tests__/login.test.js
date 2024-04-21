@@ -5,16 +5,15 @@ import Login from '../pages/login';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const mockNavigate = jest.fn();
-
-
-
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-  jest.mock('firebase/auth', () => ({
-    getAuth: jest.fn(),
+jest.mock('firebase/auth', () => {
+  const originalModule = jest.requireActual('firebase/auth');
+  return {
+    ...originalModule,
     signInWithEmailAndPassword: jest.fn((auth, email, password) => {
         switch (email) {
             case 'admin@example.com':
@@ -28,51 +27,49 @@ jest.mock('react-router-dom', () => ({
             default:
               return Promise.reject(new Error('Invalid credentials'));
           }
-      
     }),
-  }));
-  
-  jest.mock('firebase/firestore', () => ({
-    getFirestore: jest.fn(() => ({})),
-    doc: jest.fn((db, collection, userId) => ({ id: userId })),
-    getDoc: jest.fn(docRef => {
-      switch (docRef.id) {
-        case 'admin123':
-          return Promise.resolve({
-            exists: jest.fn().mockReturnValue(true),
-            data: jest.fn().mockReturnValue({ role: 'admin' }),
-          });
-        case 'doctor134':
-          return Promise.resolve({
-            exists: jest.fn().mockReturnValue(true),
-            data: jest.fn().mockReturnValue({ role: 'doctor' }),
-          });
-        case 'nurse135':
-          return Promise.resolve({
-            exists: jest.fn().mockReturnValue(true),
-            data: jest.fn().mockReturnValue({ role: 'nurse' }),
-          });
-        case 'patient123':
-          return Promise.resolve({
-            exists: jest.fn().mockReturnValue(true),
-            data: jest.fn().mockReturnValue({ role: 'patient' }),
-          });
-        default:
-          return Promise.reject(new Error('No document'));
-      }
-    }),
-  }));
-  
+  };
+});
+
+jest.mock('firebase/firestore', () => ({
+  getFirestore: jest.fn(() => ({})),
+  doc: jest.fn((db, collection, userId) => ({ id: userId })),
+  getDoc: jest.fn(docRef => {
+    switch (docRef.id) {
+      case 'admin123':
+        return Promise.resolve({
+          exists: jest.fn().mockReturnValue(true),
+          data: jest.fn().mockReturnValue({ role: 'admin' }),
+        });
+      case 'doctor134':
+        return Promise.resolve({
+          exists: jest.fn().mockReturnValue(true),
+          data: jest.fn().mockReturnValue({ role: 'doctor' }),
+        });
+      case 'nurse135':
+        return Promise.resolve({
+          exists: jest.fn().mockReturnValue(true),
+          data: jest.fn().mockReturnValue({ role: 'nurse' }),
+        });
+      case 'patient123':
+        return Promise.resolve({
+          exists: jest.fn().mockReturnValue(true),
+          data: jest.fn().mockReturnValue({ role: 'patient' }),
+        });
+      default:
+        return Promise.reject(new Error('No document'));
+    }
+  }),
+}));
+ 
   beforeEach(() => {
     console.error = jest.fn();
     jest.clearAllMocks();
     jest.resetAllMocks();
     signInWithEmailAndPassword.mockResolvedValue({
-      user: { uid: 'user123' }
-    });
-});
-
-  
+        user: { uid: 'user123' }
+      });
+  });
 
   const setup = () => {
     const utils = render(
@@ -108,18 +105,19 @@ jest.mock('react-router-dom', () => ({
     });
   });
   it('navigates to the admin dashboard on successful admin login', async () => {
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: 'admin@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
-    fireEvent.click(submitButton);
-    try {
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/adminDashboard');
-      });
-    } catch (error) {
-      console.error("Failed to navigate as expected:", error);
-    }
-  });
+  const { emailInput, passwordInput, submitButton } = setup();
+  fireEvent.change(emailInput, { target: { value: 'admin@example.com' } });
+  fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
+  fireEvent.click(submitButton);
+  try {
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/adminDashboard');
+    });
+  } catch (error) {
+    console.error("Failed to navigate as expected:", error);
+  }
+});
+
   it('navigates to the doctor dashboard on successful doctor login', async () => {
     const { emailInput, passwordInput, submitButton } = setup();
     fireEvent.change(emailInput, { target: { value: 'doctor@example.com' } });

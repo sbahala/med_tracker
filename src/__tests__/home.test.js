@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Home from '../pages/Home';
+import Home from '../pages/home';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
