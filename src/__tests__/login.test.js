@@ -104,12 +104,21 @@ beforeEach(() => {
     fireEvent.change(passwordInput, { target: { value: password } });
     fireEvent.click(submitButton);
   };
-  const expectNavigation = async (expectedPath) => {
-  await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith(expectedPath));
-};
-
+  const expectErrorMessage = async (error) => {
+    await waitFor(() => expect(screen.getByText(error)).toBeInTheDocument());
+  };
   
 describe('Login functionality', () => {
+
+  it.each`
+  scenario                        | email               | password         | errorMessage
+  ${'Failed login'}               | ${'user@example.com'} | ${'wrongpassword'} | ${'Something went wrong'}
+  ${'Invalid login credentials'}  | ${'user@example.com'} | ${'wrongpassword'} | ${'Something went wrong'}
+`('$scenario', async ({ email, password, errorMessage }) => {
+  signInWithEmailAndPassword.mockRejectedValueOnce(new Error(errorMessage));
+  await performLogin(email, password);
+  await expectErrorMessage(errorMessage);
+});
 
   it('displays an error message on failed login', async () => {
     signInWithEmailAndPassword.mockRejectedValueOnce(new Error('Failed to log in'));
