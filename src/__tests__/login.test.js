@@ -107,16 +107,4 @@ describe('Login functionality', () => {
   await performLogin(email, password);
   await expectErrorMessage(errorMessage);
 });
-
-  it('displays an error message on failed login', async () => {
-    signInWithEmailAndPassword.mockRejectedValueOnce(new Error('Failed to log in'));
-    await performLogin('user@example.com', 'wrongpassword');
-    await waitFor(() => expect(screen.getByText('Something went wrong')).toBeInTheDocument());
-  });
-
-  it('displays an error message on invalid login credentials', async () => {
-    signInWithEmailAndPassword.mockRejectedValueOnce(new Error('Invalid credentials'));
-    await performLogin('user@example.com', 'wrongpassword');
-    await waitFor(() => expect(screen.getByText('Something went wrong')).toBeInTheDocument());
-  });
 });
