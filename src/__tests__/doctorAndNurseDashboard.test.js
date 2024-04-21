@@ -107,43 +107,42 @@ describe('Dashboard Tests', () => {
     });
   });
   describe('AdminDashboard Tests', () => {
+    const renderAdminDashboard = () => renderWithProviders(<AdminDashboard />);
+  
+    const testNavigation = (buttonText, expectedRoute) => {
+      it(`navigates to ${expectedRoute} on button click`, () => {
+        const { getByText } = renderAdminDashboard();
+        fireEvent.click(getByText(buttonText));
+        expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
+      });
+    };
+  
+    const testSignOutProcess = (buttonText, expectedRoute) => {
+      it('calls sign out process on "Sign Out" button click for Admin', async () => {
+        const { getByText } = renderAdminDashboard();
+        fireEvent.click(getByText(buttonText));
+        await waitFor(() => {
+          expect(signOut).toHaveBeenCalled();
+          expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
+        });
+      });
+    };
+  
+    beforeEach(() => {
+      mockNavigate.mockReset();
+      jest.clearAllMocks();
+    });
   
     it('renders correctly to Admin', () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
+      const { getByText } = renderAdminDashboard();
       expect(getByText('Welcome to Admin Dashboard')).toBeInTheDocument();
     });
-  
-    it('navigates to create appointments on button click for Admin', () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
-      fireEvent.click(getByText('Create Appointments'));
-      expect(mockNavigate).toHaveBeenCalledWith('/appointmentCreate');
-    });
-  
-    it('navigates to view appointments on button click for Admin', () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
-      fireEvent.click(getByText('View Appointments'));
-      expect(mockNavigate).toHaveBeenCalledWith('/appointmentView');
-    });
-  
-    it('navigates to edit user accounts on button click for Admin', () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
-      fireEvent.click(getByText('Edit User Accounts'));
-      expect(mockNavigate).toHaveBeenCalledWith('/editExistingAccounts');
-    });
-  
-    it('navigates to edit equipment on button click for Admin', () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
-      fireEvent.click(getByText('Edit Equipments'));
-      expect(mockNavigate).toHaveBeenCalledWith('/viewEquipments');
-    });
-  
-    it('calls sign out process on "Sign Out" button click for Admin', async () => {
-      const { getByText } = renderWithProviders(<AdminDashboard />);
-      fireEvent.click(getByText('Sign Out'));
-      await waitFor(() => {
-        expect(signOut).toHaveBeenCalled();
-        expect(mockNavigate).toHaveBeenCalledWith('/');
-      });
-    });
+
+    testNavigation('Create Appointments', '/appointmentCreate');
+    testNavigation('View Appointments', '/appointmentView');
+    testNavigation('Edit User Accounts', '/editExistingAccounts');
+    testNavigation('Edit Equipments', '/viewEquipments');
+    testSignOutProcess('Sign Out', '/');
   });
+  
 });
