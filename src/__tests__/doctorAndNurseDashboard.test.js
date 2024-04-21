@@ -107,24 +107,20 @@ describe('Dashboard Tests', () => {
     });
   });
   describe('AdminDashboard Tests', () => {
-    const renderAdminDashboard = () => renderWithProviders(<AdminDashboard />);
+    const renderAdminDashboard = () => renderWithProviders(<AdminDashboard />, 'admin');
   
-    const testNavigation = (buttonText, expectedRoute) => {
-      it(`navigates to ${expectedRoute} on button click`, () => {
-        const { getByText } = renderAdminDashboard();
-        fireEvent.click(getByText(buttonText));
-        expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
-      });
+    const testNavigation = async (buttonText, expectedRoute) => {
+      const { getByText } = renderAdminDashboard();
+      fireEvent.click(getByText(buttonText));
+      expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
     };
   
-    const testSignOutProcess = (buttonText, expectedRoute) => {
-      it('calls sign out process on "Sign Out" button click for Admin', async () => {
-        const { getByText } = renderAdminDashboard();
-        fireEvent.click(getByText(buttonText));
-        await waitFor(() => {
-          expect(signOut).toHaveBeenCalled();
-          expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
-        });
+    const testSignOutProcess = async (buttonText, expectedRoute) => {
+      const { getByText } = renderAdminDashboard();
+      fireEvent.click(getByText(buttonText));
+      await waitFor(() => {
+        expect(signOut).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith(expectedRoute);
       });
     };
   
@@ -138,11 +134,25 @@ describe('Dashboard Tests', () => {
       expect(getByText('Welcome to Admin Dashboard')).toBeInTheDocument();
     });
 
-    testNavigation('Create Appointments', '/appointmentCreate');
-    testNavigation('View Appointments', '/appointmentView');
-    testNavigation('Edit User Accounts', '/editExistingAccounts');
-    testNavigation('Edit Equipments', '/viewEquipments');
-    testSignOutProcess('Sign Out', '/');
+    it('navigates to Create Appointments on button click', async () => {
+      await testNavigation('Create Appointments', '/appointmentCreate');
+    });
+  
+    it('navigates to View Appointments on button click', async () => {
+      await testNavigation('View Appointments', '/appointmentView');
+    });
+  
+    it('navigates to Edit User Accounts on button click', async () => {
+      await testNavigation('Edit User Accounts', '/editExistingAccounts');
+    });
+  
+    it('navigates to Edit Equipments on button click', async () => {
+      await testNavigation('Edit Equipments', '/viewEquipments');
+    });
+  
+    it('calls sign out process on "Sign Out" button click for Admin', async () => {
+      await testSignOutProcess('Sign Out', '/');
+    });
   });
   
 });
