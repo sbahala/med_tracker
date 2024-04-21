@@ -108,36 +108,36 @@ describe('Dashboard Tests', () => {
   });
   describe('AdminDashboard Tests', () => {
   
-    it('renders correctly', () => {
+    it('renders correctly to Admin', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       expect(getByText('Welcome to Admin Dashboard')).toBeInTheDocument();
     });
   
-    it('navigates to create appointments on button click', () => {
+    it('navigates to create appointments on button click for Admin', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       fireEvent.click(getByText('Create Appointments'));
       expect(mockNavigate).toHaveBeenCalledWith('/appointmentCreate');
     });
   
-    it('navigates to view appointments on button click', () => {
+    it('navigates to view appointments on button click for Admin', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       fireEvent.click(getByText('View Appointments'));
       expect(mockNavigate).toHaveBeenCalledWith('/appointmentView');
     });
   
-    it('navigates to edit user accounts on button click', () => {
+    it('navigates to edit user accounts on button click for Admin', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       fireEvent.click(getByText('Edit User Accounts'));
       expect(mockNavigate).toHaveBeenCalledWith('/editExistingAccounts');
     });
   
-    it('navigates to edit equipment on button click', () => {
+    it('navigates to edit equipment on button click for Admin', () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       fireEvent.click(getByText('Edit Equipments'));
       expect(mockNavigate).toHaveBeenCalledWith('/viewEquipments');
     });
   
-    it('calls sign out process on "Sign Out" button click', async () => {
+    it('calls sign out process on "Sign Out" button click for Admin', async () => {
       const { getByText } = renderWithProviders(<AdminDashboard />);
       fireEvent.click(getByText('Sign Out'));
       await waitFor(() => {
