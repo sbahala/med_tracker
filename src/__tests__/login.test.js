@@ -67,18 +67,6 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockNavigate.mockReset();
   jest.resetAllMocks();
-  signInWithEmailAndPassword.mockImplementation((auth, email, password) => {
-    if (email === 'admin@example.com' && password === 'correctpassword') {
-      return Promise.resolve({ user: { uid: 'admin123' } });
-    } else if (email === 'doctor@example.com' && password === 'correctpassword') {
-      return Promise.resolve({ user: { uid: 'doctor134' } });
-    } else if (email === 'nurse@example.com' && password === 'correctpassword') {
-      return Promise.resolve({ user: { uid: 'nurse135' } });
-    } else if (email === 'patient@example.com' && password === 'correctpassword') {
-      return Promise.resolve({ user: { uid: 'patient123' } });
-    }
-    return Promise.reject(new Error('Invalid credentials'));
-  });
 });
 
   const setup = () => {
