@@ -5,6 +5,9 @@ import Login from '../pages/login';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const mockNavigate = jest.fn();
+
+
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
