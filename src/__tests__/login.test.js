@@ -20,9 +20,9 @@ jest.mock('react-router-dom', () => ({
             case 'admin@example.com':
               return Promise.resolve({ user: { uid: 'admin123' } });
             case 'doctor@example.com':
-              return Promise.resolve({ user: { uid: 'doctor123' } });
+              return Promise.resolve({ user: { uid: 'doctor134' } });
             case 'nurse@example.com':
-              return Promise.resolve({ user: { uid: 'nurse123' } });
+              return Promise.resolve({ user: { uid: 'nurse135' } });
             case 'patient@example.com':
               return Promise.resolve({ user: { uid: 'patient123' } });
             default:
@@ -42,12 +42,12 @@ jest.mock('react-router-dom', () => ({
             exists: jest.fn().mockReturnValue(true),
             data: jest.fn().mockReturnValue({ role: 'admin' }),
           });
-        case 'doctor123':
+        case 'doctor134':
           return Promise.resolve({
             exists: jest.fn().mockReturnValue(true),
             data: jest.fn().mockReturnValue({ role: 'doctor' }),
           });
-        case 'nurse123':
+        case 'nurse135':
           return Promise.resolve({
             exists: jest.fn().mockReturnValue(true),
             data: jest.fn().mockReturnValue({ role: 'nurse' }),
