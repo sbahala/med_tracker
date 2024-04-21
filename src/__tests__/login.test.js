@@ -11,25 +11,24 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('firebase/auth', () => {
-  const originalModule = jest.requireActual('firebase/auth');
   return {
-    ...originalModule,
+    ...jest.requireActual('firebase/auth'),
     signInWithEmailAndPassword: jest.fn((auth, email, password) => {
-        switch (email) {
-            case 'admin@example.com':
-              return Promise.resolve({ user: { uid: 'admin123' } });
-            case 'doctor@example.com':
-              return Promise.resolve({ user: { uid: 'doctor134' } });
-            case 'nurse@example.com':
-              return Promise.resolve({ user: { uid: 'nurse135' } });
-            case 'patient@example.com':
-              return Promise.resolve({ user: { uid: 'patient123' } });
-            default:
-              return Promise.reject(new Error('Invalid credentials'));
-          }
+      const users = {
+        'admin@example.com': { uid: 'admin123' },
+        'doctor@example.com': { uid: 'doctor134' },
+        'nurse@example.com': { uid: 'nurse135' },
+        'patient@example.com': { uid: 'patient123' }
+      };
+      if (users[email] && password === 'correctpassword') {
+        return Promise.resolve({ user: users[email] });
+      } else {
+        return Promise.reject(new Error('Invalid credentials'));
+      }
     }),
   };
 });
+
 
 jest.mock('firebase/firestore', () => ({
   getFirestore: jest.fn(() => ({})),
@@ -69,28 +68,15 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-  const setup = () => {
-    const utils = render(
+  const performLogin = async (email, password) => {
+    const { getByPlaceholderText, getByRole } = render(
       <Router>
         <Login />
       </Router>
     );
-    const emailInput = utils.getByPlaceholderText('Email');
-    const passwordInput = utils.getByPlaceholderText('Password');
-    const submitButton = utils.getByRole('button', { name: /login/i });
-    return {
-      ...utils,
-      emailInput,
-      passwordInput,
-      submitButton
-    };
-  };
-
-  const performLogin = async (email, password) => {
-    const { emailInput, passwordInput, submitButton } = setup();
-    fireEvent.change(emailInput, { target: { value: email } });
-    fireEvent.change(passwordInput, { target: { value: password } });
-    fireEvent.click(submitButton);
+    fireEvent.change(getByPlaceholderText('Email'), { target: { value: email } });
+    fireEvent.change(getByPlaceholderText('Password'), { target: { value: password } });
+    fireEvent.click(getByRole('button', { name: /login/i }));
   };
   const expectErrorMessage = async (error) => {
     await waitFor(() => expect(screen.getByText(error)).toBeInTheDocument());
