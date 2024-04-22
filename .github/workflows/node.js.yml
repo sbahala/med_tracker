@@ -48,17 +48,17 @@ jobs:
     - name: Build
       run: npm run build --if-present
 
-    #- name: Run Tests
-     # run: npm test
+    - name: Run Tests
+      run: npm test
     # working-directory: med-tracker
-    - name: Run Tests with Coverage
-      run: npm test -- --coverage
+     #- name: Run Tests with Coverage
+      # run: npm test -- --coverage
 
     # Upload the coverage report directory as an artifact
-    - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
-      with:
-        name: jest-coverage-report
-        path: coverage/
+     #- name: Upload Coverage Report
+      # uses: actions/upload-artifact@v3
+       #with:
+        # name: jest-coverage-report
+        # path: coverage/
 
 
