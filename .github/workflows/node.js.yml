@@ -60,6 +60,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: jest-coverage-report
-        path: med-tracker/coverage
+        path: coverage/
 
 
