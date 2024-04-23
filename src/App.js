@@ -24,6 +24,8 @@ import DoctorCompletedAppointments from "./Components/doctor/doctorCompletedAppo
 import DoctorEquipmentView from "./Components/doctor/doctorEquipmentView";
 import DoctorOntimeAppointments from "./Components/doctor/doctorOntimeAppointments";
 import ViewAllEquipments from "./Components/admin/viewAllEquipments";
+import ViewEquipmentsApp from "./Components/admin/viewEquipmentsApp";
+import ViewPatientEquipment from "./Components/Patients/viewPatientEquipment";
 import DoctorBookEquipment from "./Components/doctor/doctorBookEquipment";
 import NurseEditEquipmentBookings from "./Components/nurse/nurseEditEquipmentBookings";
 
@@ -127,6 +129,16 @@ function App() {
              <Route path="nurseEditEquipmentBookings" element={
                 <ProtectedRoute allowedRoles={['nurse']}>
                     <NurseEditEquipmentBookings/>
+                </ProtectedRoute>
+            } />
+            <Route path="adminViewEquipmentsApp" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <ViewEquipmentsApp/>
+                </ProtectedRoute>
+            } />
+            <Route path="patientViewEquipment" element={
+                <ProtectedRoute allowedRoles={['patient']}>
+                    <ViewPatientEquipment/>
                 </ProtectedRoute>
             } />
         </Routes>

@@ -15,6 +15,10 @@ const PatientDashboard = () => {
         navigate('/appointmentRecords');
     }
 
+    const handleViewPatientEquipment=()=>{
+        navigate('/patientViewEquipment');
+    }
+
     const handleCreateAppointments = async () => {
         try {
           // Replace 'currentUserId' with the actual logged-in user's ID
@@ -45,9 +49,11 @@ const PatientDashboard = () => {
             <header className="fixed-header"><h1>Welcome to Patient Dashboard</h1></header>
             <main className="content">
                 <div className="appointmentSelectionContainer">
-                <button onClick={handleSetupAccount} className="selectionButton">Edit Account</button>
-                <button onClick={handleViewAppointments} className="selectionButton">View Appointments Records</button>
-                <button onClick={handleCreateAppointments} className="selectionButton">Create Appointments</button>
+                    <button onClick={handleSetupAccount} className="selectionButton">Edit Account</button>
+                    <button onClick={handleViewAppointments} className="selectionButton">View Appointments Records</button>
+                    <button onClick={handleCreateAppointments} className="selectionButton">Create Appointments</button>
+                    <button onClick={handleViewPatientEquipment} className="selectionButton">View Equipments Appointments</button>
+
                 </div>
             </main>
             <footer className="footer">

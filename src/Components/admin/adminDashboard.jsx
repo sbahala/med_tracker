@@ -20,6 +20,10 @@ const AdminDashboard = () => {
         navigate('/viewEquipments');
     }
 
+    const handleViewEquipmentsApp=()=>{
+        navigate('/adminViewEquipmentsApp');
+    }
+
 
 
 
@@ -42,6 +46,7 @@ const AdminDashboard = () => {
                     <button onClick={handleCreateAppointments} className="selectionButton">Create Appointments</button>
                     <button onClick={handleExistingAccounts} className="selectionButton">Edit User Accounts</button>
                     <button onClick={handleCreateEquipments} className="selectionButton">Edit Equipments</button>
+                    <button onClick={handleViewEquipmentsApp} className="selectionButton">View Equipments Appointments</button>
 
                 </div>
             </main>
