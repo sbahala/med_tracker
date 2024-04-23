@@ -44,7 +44,7 @@ const NurseEditEquipmentBookings = () => {
       return (!filter.name || equipment.name === filter.name) &&
              (equipment.status === filter.status);
     });
-
+    setEquipment([]);
     if (filter.status === 'booked' || filter.status === 'inuse') {
       const appointmentsSnapshot = await getDocs(collection(db, "equipmentAppointments"));
       const bookedEquipmentData = await Promise.all(appointmentsSnapshot.docs.map(doc => {
@@ -55,9 +55,10 @@ const NurseEditEquipmentBookings = () => {
           ...doc.data(),
         } : null;
       }));
-
+      setEquipment([]);
       setEquipment(bookedEquipmentData.filter(e => e != null));
     } else {
+      setEquipment([]);
       setEquipment(equipmentData);
     }
   }, [filter]);
