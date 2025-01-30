@@ -15,10 +15,13 @@ Tools: Node.js, npm, Firebase CLI
 📥 1️⃣ Clone the Repository
 
 git clone https://github.com/YOUR_GITHUB_USERNAME/medtrack.git
+
 cd medtrack
+
 📌 2️⃣ Install Dependencies
 Make sure you have Node.js installed. Then, install dependencies:
 npm install
+
 🔑 3️⃣ Set Up Firebase Configuration
 Create a .env file in the root directory and add your Firebase credentials:
 
@@ -28,27 +31,42 @@ REACT_APP_PROJECT_ID=your-project-id
 REACT_APP_STORAGE_BUCKET=your-storage-bucket
 REACT_APP_MESSAGING_SENDER_ID=your-messaging-sender-id
 REACT_APP_APP_ID=your-app-id
+
 You can find these values in your Firebase Console under Project Settings → General → Your Apps.
 
 🏗 4️⃣ Build the Project
+
 Before deploying, build the React project:
 npm run build
+
 💻 5️⃣ Run the Application Locally
+
 To start the development server:
 
 npm start
+
 ✅ Open http://localhost:3000/ in your browser.
 
 📦 Deployment Guide
+
 🔹 Firebase Hosting Deployment
+
 1️⃣ Install Firebase CLI
+
 npm install -g firebase-tools
+
 2️⃣ Log in to Firebase
+
 firebase login
+
 3️⃣ Initialize Firebase Hosting (First-time Setup)
+
 firebase init hosting
+
 Select Firebase project: medtracknew
+
 Public directory: build
+
 Single-page app? → Yes
 4️⃣ Deploy the Application
 firebase deploy
